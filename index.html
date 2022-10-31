@@ -3,68 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <title>FFMPEG Player </title>
+    <style>
+      video{
+        background: color:red ;
+    }
+    </style>
 </head>
 
 
 <body>
 
-<table>
-<th>
-<div id="div" style="text-align:center">
-  <input id="inp1" type="file" accept="video/*">
-  <br><br>
-  <video id="video1" width="420" controls>
-     <source id="source1"/>
-   </video>
 
-     <br><br>
-     <button onclick="playPause()">Play/Pause</button>
-     <button onclick="makeBig()">Big</button>
-     <button onclick="makeSmall()">Small</button>
-     <button onclick="makeNormal()">Normal</button>
-</div>
-</th>
-
-<th>
-<div id="div" style="text-align:center">
-  <input id="inp2" type="file" accept="video/*">
-  <br><br>
-  <video id="video2" width="420" controls>
-     <source id="source2"/>
-   </video>
-     <br><br>
-   <button onclick="playPause()">Play/Pause</button>
-   <button onclick="makeBig()">Big</button>
-   <button onclick="makeSmall()">Small</button>
-   <button onclick="makeNormal()">Normal</button>
-</div>
-</th>
-<!--
-<th>
-   <div>
-     <form action="/" method="post">
-       <button type="submit"> Hello Server!</button>
-     </form>
- </div>
-</th>
--->
-
-<th>
+<form method="POST" action="/profile-upload-single" enctype="multipart/form-data">
     <div>
-    <form action="/" method="post">
-      <input type="text" id="text" name="num1" placeholder="First number ">
-      <input type="file" id="video" name="videoFile" value="Choose video to send at the server ">
-      <button type="submit" name="submit"> Send to the server</button>
-    </form>
-  </div>
-</th>
-</table>
+        <label>Upload profile picture</label>
+        <input type="file" name="profile-file" required accept="video/*"/>
+    </div>
+    <div>
+        <input type="submit" value="Upload" />
+    </div>
+</form>
 
-<!--<script> src="client.js" </script>
 
-</body>-->
+<hr>
+
+      <hr>
+
+      <form method="POST" action="/profile-upload-multiple" enctype="multipart/form-data">
+          <div>
+              <label>Upload multiple profile picture</label>
+              <input type="file" name="profile-files" required multiple  />
+          </div>
+          <div>
+              <input type="submit" value="Upload" />
+          </div>
+      </form>
+
+
 
 <script>
+
+/*
 inp1.onchange = function(){
     source1.src = URL.createObjectURL(inp1.files[0]);
     video1.load();
@@ -86,37 +65,28 @@ inp1.onchange = function(){
     }
 
 
-let divs = document.querySelectorAll("div1");
-
-let myVideo2 = document.getElementById('video2');
-
-myVideo2.addEventListener( "loadedmetadata", function (e) {
-    var videoWidth = this.videoWidth,
-    videoHeight = this.videoHeight;
-    console.log(videoWidth);
-    console.log(videoHeight);
-
-}, false );
-
-var myVideo = document.getElementById("video1");
-/*
-if(divs==="inp1")
-      var myVideo = document.getElementById("video1");
-  else if (Div.id==="inp2") {
-      var myVideo = document.getElementById("video2");
-  }
+    let divs = document.querySelectorAll("div1");
 */
-// Read the frame size of the video
-myVideo.addEventListener( "loadedmetadata", function (e) {
-    var videoWidth = this.videoWidth,
-    videoHeight = this.videoHeight;
-    console.log(videoWidth);
-    console.log(videoHeight);
+    /*
+    if(divs==="inp1")
+          var myVideo = document.getElementById("video1");
+      else if (Div.id==="inp2") {
+          var myVideo = document.getElementById("video2");
+      }
+    */
+/*
+    let myVideo2 = document.getElementById('video2');
 
-}, false );
+    myVideo2.addEventListener( "loadedmetadata", function (e) {
+        var videoWidth = this.videoWidth,
+        videoHeight = this.videoHeight;
+        console.log(videoWidth);
+        console.log(videoHeight);
 
-
-
+    }, false );
+*/
+/*
+    var myVideo = document.getElementById("video1");
 
 function playPause() {
   if (myVideo.paused)
@@ -137,8 +107,11 @@ function makeNormal() {
     myVideo.width = 420;
 }
 
-
 </script>
+
+<script> src="client.js" </script>
+
+</body>
 
 
 
