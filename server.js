@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const multer = require("multer");
 var ffmpegCommand = require('fluent-ffmpeg');
+const childProcess = require("child_process");
 
 // #########################
 
@@ -74,13 +75,41 @@ app.post('/profile-upload-multiple', upload.array('profile-files', 12), function
     var response = '<a href="/">Home</a><br>'
     response += "Files uploaded successfully.<br>"
     console.log(req.files.length)
+    var widthFrame = 352;
+    var lengthFrame = 640;
     for(var i=0;i<req.files.length;i++){
         //console.log(req.files[i].path)
         //response += `<img src="${req.files[i].path}" /><br>`
+        /*
+        const pathForExe =
+          'C:\\Programs\\ffmpeg\\ffmpeg-2021-04-25-git-d98884be41-full_build\\bin\\ffmpeg.exe ' +
+          ' -i C:\\Diana\\2022_Diana\\CreatingWebsites\\ffmpegPlayer\\uploads\\7_CMajorScale_and_SonatinaBiehl.mp4 ' +
+          ' -c:a copy -s 352x640 ' +
+          '.\\OutputFiles\\7_CMajorScale_and_SonatinaBiehlResized.mp4';
+          */
+          var lengthFile = req.files[i].filename.length;
+          console.log(lengthFile);
+          var fileName = req.files[i].filename;
+          console.log(fileName);
+        const pathForExe =
+            'C:\\Programs\\ffmpeg\\ffmpeg-2021-04-25-git-d98884be41-full_build\\bin\\ffmpeg.exe ' +
+            ' -i C:\\Diana\\2022_Diana\\CreatingWebsites\\ffmpegPlayer\\' + req.files[i].path +
+            ' -c:a copy -s ' + widthFrame + 'x' + lengthFrame +
+            ' .\\OutputFiles\\' + fileName.substr(0, lengthFile-4)+ 'Resized.mp4';
         ffmpegCommand(req.files[i]).size('50%');
-        response += `<video src="${req.files[i].path}" width="420"  type="video/mp4" controls><br>`
-        console.log(response)
+        response += `<div>
+        ${req.files[i].filename}
+        <video src="${req.files[i].path}" width ="420" type="video/mp4" controls>
+        </div> <br> <br> <br>`
+        console.log(req.files[i].filename)
+        console.log(req.files[i].path)
+        console.log(pathForExe)
         '<vr>'
+
+      childProcess.exec(pathForExe, function(err, data) {
+        console.log(err)
+        console.log(data.toString());
+    });
     }
 
   return res.send(response)
