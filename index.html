@@ -11,13 +11,17 @@
 </head>
 
 
+
 <body>
 
+<!--
 
 <form method="POST" action="/profile-upload-single" enctype="multipart/form-data">
     <div>
         <label>Upload profile picture</label>
         <input type="file" name="profile-file" required accept="video/*"/>
+        <video id="video" width="320" height="240" controls style="display: none;">
+        </video>
     </div>
     <div>
         <input type="submit" value="Upload" />
@@ -39,9 +43,119 @@
           </div>
       </form>
 
+      <hr>
+      -->
+
+<label for="input">Choose a video file to process:</label>
+<input type="file" id="input" name="input_video" required multiple accept="video/mp4, video/mov">
+<video id="myVideo" width="320" height="240" controls style="display: none;"></video>
+<br> <br> <br>
+<hr>
 
 
 <script>
+
+
+
+       var videoSource = new Array();
+       let videoCount = document.getElementById("input").files.length;
+       console.log(videoCount);
+
+        document.getElementById("input").addEventListener("change", function() {
+            var nFilesLength = this.files.length;
+            console.log(nFilesLength);
+            for(nI=0;nI<nFilesLength; nI++){
+                console.log(nI);
+                console.log(this.files[nI].name);
+                var media = URL.createObjectURL(this.files[nI]);
+                console.log(media);
+                videoSource[nI]= media;
+                video.src = media;
+                video.style.display = "block";
+                video.load();
+                video.play();
+
+        }
+      });
+/*
+  for(nI=0;nI<nFilesLength; nI++){
+    var video = document.getElementById("myVideo");
+    video.src = videoSource[nI];
+    video.style.display = "block";
+    video.load();
+    video.play();
+  }
+*/
+//      document.getElementById("myVideo").addEventListener('ended',myHandler,false);
+/*
+let key = 0; // global
+      function myHandler() {
+        key++;
+        if(key == (videoCount)){
+          key = 0;
+          videoPlay(key);
+          }
+        else{
+          videoPlay(key);
+          }
+        };
+
+        function videoPlay(videoNum)
+        {
+          videoElement.setAttribute("src",videoSource[videoNum]);
+          videoElement.setAttribute("type",'video/mp4');
+          videoElement.style.display = "block";
+          videoElement.autoplay = true;
+          videoElement.load();
+          videoElement.play();
+        }
+*/
+/*
+var videoSource = new Array();
+let key = 0; // global
+let videoElement = document.getElementById("myVideo");
+
+//document.getElementById("myVideo").addEventListener('change',myHandler,false);
+document.getElementById("input").addEventListener("change", function() {
+  var nFilesLength = this.files.length;
+  console.log(nFilesLength);
+  for(nI=0;nI<nFilesLength; nI++){
+    console.log(nI);
+    console.log(this.files[nI].name);
+    var media = URL.createObjectURL(this.files[nI]);
+    console.log(media);
+    //videoSource[nI]= media;
+    videoElement.setAttribute("src",media);
+  }
+});
+
+let videoCount = videoSource.length;
+console.log(videoCount);
+
+function videoPlay(videoNum)
+{
+  videoElement.setAttribute("src",videoSource[videoNum]);
+  videoElement.setAttribute("type",'video/mp4');
+  videoElement.style.display = "block";
+  videoElement.autoplay = true;
+  videoElement.load();
+  videoElement.play();
+}
+
+
+document.getElementById("myVideo").addEventListener('ended',myHandler,false);
+
+
+function myHandler() {
+  key++;
+  if(key == (videoCount)){
+    key = 0;
+    videoPlay(key);
+    }
+  else{
+    videoPlay(key);
+    }
+  };
 
 /*
 inp1.onchange = function(){
@@ -86,7 +200,7 @@ inp1.onchange = function(){
     }, false );
 */
 /*
-    var myVideo = document.getElementById("video1");
+  var myVideo = document.getElementById("video1");
 
 function playPause() {
   if (myVideo.paused)
@@ -106,6 +220,8 @@ function makeSmall() {
 function makeNormal() {
     myVideo.width = 420;
 }
+
+*/
 
 </script>
 
