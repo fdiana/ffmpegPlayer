@@ -7,6 +7,13 @@ var hightSize = 352;
 var fun =function(){
    console.log("fun() start");
    //childProcess.exec('C:/Programs/ffmpeg/ffmpeg-2021-04-25-git-d98884be41-full_build/bin/ffmpeg.exe' ['-i','C:/Diana/2022_Diana/CreatingWebsites/media/2_GMinorScale_and_BachMinuetInGMinor.mp4'], function(err, data) {
+
+childProcess.exec('C:\\Programs\\ffmpeg\\ffmpeg-2021-04-25-git-d98884be41-full_build\\bin\\ffmpeg.exe  -i .//media//cat.mp4 -v quiet -print_format json -show_entries stream=width,height -hide_banner > output.txt', function(err, data) {
+           console.log(err)
+           console.log(data.toString());
+       });
+
+
 childProcess.exec('C:\\Programs\\ffmpeg\\ffmpeg-2021-04-25-git-d98884be41-full_build\\bin\\ffmpeg.exe  -i C://Diana//2022_Diana//CreatingWebsites//media//Bow1.mp4 -c:a copy -s 352x640 .\\OutputFiles\\Bow1Resized.mp4', function(err, data) {
         console.log(err)
         console.log(data.toString());
