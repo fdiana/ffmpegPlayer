@@ -35,14 +35,13 @@
     <hr>
 
 
-    <form method="POST" action="/profile-upload-multiple" enctype="multipart/form-data">
+    <form method="POST" action="/profile-concatenate-multiple-videos" enctype="multipart/form-data">
       <div>
         <label>Upload multiple files</label>
         <input type="file" name="profile-files" required multiple  />
       </div>
-      <hr>
       <div>
-        <label>Send the video file to the server and ask for file info</label>
+        <label>Send the videos file to the server, concatenate them, and show the resulted video</label>
         <input  id="input" name="input_video" type="submit" value="Upload" />
         <video id="myProcessedVideo" width="320" height="240" controls style="display: none;"></video>
        </div>

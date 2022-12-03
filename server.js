@@ -12,6 +12,8 @@ const fsProcess = require("fs");
 
 const app = express();
 const port = 3000;
+let ffmpegExePath = "C:\\Programs\\ffmpeg\\ffmpeg-2021-04-25-git-d98884be41-full_build\\bin\\ffmpeg.exe";
+let ffProbeExePath = "C:\\Programs\\ffmpeg\\ffmpeg-2021-04-25-git-d98884be41-full_build\\bin\\ffProbe.exe";
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -28,6 +30,7 @@ var upload = multer({ storage: storage })
 //app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/public'));
 app.use('/uploads', express.static('uploads'));
+app.use('/OutputFiles', express.static('OutputFiles'));
 
 //  Read information about the video sent
 
@@ -49,8 +52,8 @@ app.post('/profile-upload-single', upload.single('profile-file'), function (req,
 
 
   console.log(__dirname);
-  let ffmpegExePath = "C:\\Programs\\ffmpeg\\ffmpeg-2021-04-25-git-d98884be41-full_build\\bin\\ffmpeg.exe";
-  let ffProbeExePath = "C:\\Programs\\ffmpeg\\ffmpeg-2021-04-25-git-d98884be41-full_build\\bin\\ffProbe.exe";
+  //let ffmpegExePath = "C:\\Programs\\ffmpeg\\ffmpeg-2021-04-25-git-d98884be41-full_build\\bin\\ffmpeg.exe";
+  //let ffProbeExePath = "C:\\Programs\\ffmpeg\\ffmpeg-2021-04-25-git-d98884be41-full_build\\bin\\ffProbe.exe";
 
 
 
@@ -160,18 +163,9 @@ app.post('/profile-upload-multiple', upload.array('profile-files', 12), function
     var response = '<a href="/">Home</a><br>'
     response += "Files uploaded successfully.<br>"
     console.log(req.files.length)
-    var widthFrame = 352;
-    var lengthFrame = 640;
+
+/*
     for(var i=0;i<req.files.length;i++){
-        //console.log(req.files[i].path)
-        //response += `<img src="${req.files[i].path}" /><br>`
-        /*
-        const pathForExe =
-          'C:\\Programs\\ffmpeg\\ffmpeg-2021-04-25-git-d98884be41-full_build\\bin\\ffmpeg.exe ' +
-          ' -i C:\\Diana\\2022_Diana\\CreatingWebsites\\ffmpegPlayer\\uploads\\7_CMajorScale_and_SonatinaBiehl.mp4 ' +
-          ' -c:a copy -s 352x640 ' +
-          '.\\OutputFiles\\7_CMajorScale_and_SonatinaBiehlResized.mp4';
-          */
           var lengthFile = req.files[i].filename.length;
           console.log(lengthFile);
           var fileName = req.files[i].filename;
@@ -195,7 +189,7 @@ app.post('/profile-upload-multiple', upload.array('profile-files', 12), function
         console.log(err)
         console.log(data.toString());
     });
-    }
+  }*/
 
   return res.send(response)
 })
@@ -205,13 +199,109 @@ app.post('/profile-upload-multiple', upload.array('profile-files', 12), function
 
 //Concatenate two videos
 
-app.get("/concatenated-video", (req, res) => {
-  res.render("compress-video");
+app.get("/profile-concatenate-multiple-videos", (req, res,next) => {
+  res.sendFile(__dirname + "/index.html");
+  //res.render("compress-video");
 });
 
-app.post("/concatenated-video", (req, res) => {
-  console.log(req.files.video);
-  res.send("Success");
+
+// Concatenate multiple files
+
+app.post("/profile-concatenate-multiple-videos",  upload.array('profile-files', 12), (req, res,next) => {
+  var response = '<a href="/">Home</a><br>'
+  response += "Videos concatenated successfully.<br>"
+  console.log(req.files.length);
+
+  for(var i=0;i<req.files.length;i++){
+    let outputNameFileResized = " .\\OutputFiles\\"  + req.files[i].filename + "Resized.mp4";
+    let outputNameTSFileResized = " .\\OutputFiles\\"  + outputNameFileResized + ".ts";
+    console.log(outputNameFileResized);
+    let exeCommandResizeFile = ffmpegExePath + " -i " + ".\\" + req.files[i].path + " -c:a copy -s 352x640 " + outputNameFileResized;
+    console.log(exeCommandResizeFile);
+    childProcess.execSync(exeCommandResizeFile, function(err, data) {
+            console.log(err)
+            console.log(data.toString());
+});
+}
+/*
+for(var i=0;i<req.files.length;i++){
+    let outputNameTSFileResized = " .\\OutputFiles\\"  + req.files[i].filename + "Resized.mp4" + ".ts";
+    let exeCommandCreateTSFile = ffmpegExePath + " -i " + ".\\" + outputNameTSFileResized + " -c copy" + outputNameTSFileResized;
+    childProcess.execSync(exeCommandCreateTSFile, function(err, data) {
+            console.log(err)
+            console.log(data.toString());
+});
+}*/
+/*
+  for(var i=0;i<req.files.length;i++){
+      let inputNameTSFileResized = " .\\OutputFiles\\"  + req.files[i].filename + "Resized.mp4" + ".ts";
+      let outputNameTextFile = " .\\OutputFiles\\"  + req.files[i].filename + "Resized.mp4" + ".txt";
+      let exeCommandCreateTextFile = ffmpegExePath + " -i " + ".\\" + inputNameTSFileResized + " -c copy" + outputNameTextFile;
+      /*let exeCommandWriteTSFileToTextFile = "echo file  + "${'.\\OutputFiles\\'}" + outputNameTSFileResized + " > .\\resultfile.txt";
+      childProcess.execSync(exeCommandWriteTSFileToTextFile, function(err, data) {
+                      console.log(err)
+                      console.log(data.toString());
+                    });
+    }*/
+
+  //let exeCommandResizeFile = ffmpegExePath + " -i " + ".\\" + req.file.path + " -c:a copy -s 352x640 " + " .\\OutputFiles\\Bow1Resized.mp4";
+
+  /*childProcess.execSync('C:\\Programs\\ffmpeg\\ffmpeg-2021-04-25-git-d98884be41-full_build\\bin\\ffmpeg.exe  -i C://Diana//2022_Diana//CreatingWebsites//media//Bow1.mp4 -c:a copy -s 352x640 .\\OutputFiles\\Bow1Resized.mp4', function(err, data) {
+          console.log(err)
+          console.log(data.toString());
+      });*/
+  /*childProcess.execSync('C:\\Programs\\ffmpeg\\ffmpeg-2021-04-25-git-d98884be41-full_build\\bin\\ffmpeg.exe  -i .//OutputFiles//Bow1Resized.mp4 -c copy .\\OutputFiles\\Bow1Resized.ts', function(err, data) {
+              console.log(err)
+              console.log(data.toString());
+          });
+
+  childProcess.execSync('C:\\Programs\\ffmpeg\\ffmpeg-2021-04-25-git-d98884be41-full_build\\bin\\ffmpeg.exe  -i C://Diana//2022_Diana//CreatingWebsites//media//2_GMinorScale_and_BachMinuetInGMinor.mp4 -c:a copy -s 352x640 .\\OutputFiles\\2_GMinorScale_and_BachMinuetInGMinorResized.mp4', function(err, data) {
+                      console.log(err)
+                      console.log(data.toString());
+                  });
+
+  childProcess.execSync('C:\\Programs\\ffmpeg\\ffmpeg-2021-04-25-git-d98884be41-full_build\\bin\\ffmpeg.exe  -i .//OutputFiles//2_GMinorScale_and_BachMinuetInGMinorResized.mp4  -c copy .\\OutputFiles\\2_GMinorScale_and_BachMinuetInGMinorResized.ts', function(err, data) {
+                 console.log(err)
+                 console.log(data.toString());
+                });
+
+  childProcess.execSync("echo file '.\\OutputFiles\\Bow1Resized.ts' > .\\resultfile.txt", function(err, data) {
+                  console.log(err)
+                  console.log(data.toString());
+                 });
+
+  childProcess.execSync("echo file '.\\OutputFiles\\2_GMinorScale_and_BachMinuetInGMinorResized.ts' >> .\\resultfile.txt", function(err, data) {
+                      console.log(err)
+                      console.log(data.toString());
+    });
+
+  childProcess.execSync('C:\\Programs\\ffmpeg\\ffmpeg-2021-04-25-git-d98884be41-full_build\\bin\\ffmpeg.exe -f concat -safe 0 -i .\\resultfile.txt -c copy .\\OutputFiles\\output.mp4', function(err, data) {
+                      console.log(err)
+                      console.log(data.toString());
+    });*/
+
+    let outputFilePath  = '.\\OutputFiles\\output.mp4';
+    console.log(outputFilePath);
+    response += `<div>
+    <video src= ${outputFilePath} width ="420" type="video/mp4" controls>
+    </div> <br> <br> <br>`
+
+for(var i=0;i<req.files.length;i++){
+      var lengthFile = req.files[i].filename.length;
+      console.log(lengthFile);
+      var fileName = req.files[i].filename;
+      console.log(fileName);
+      console.log(req.files[i].path)
+    response += `<div>
+    ${req.files[i].filename.info}
+    <video src="${req.files[i].path}" width ="420" type="video/mp4" controls>
+    </div> <br> <br> <br>`
+    //console.log(req.files[i].filename)
+    //console.log(req.files[i].path)
+    //console.log(pathForExe)
+    '<vr>'
+}
+  return res.send(response);
 });
 
 
