@@ -2,25 +2,138 @@
 <html>
 <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
 <head>
+  <link rel="stylesheet"  type="text/css" href="./styles.css" >
+  <link rel="stylesheet"  type="text/css" href="./nouislider.css" >
+  <script src="nouislider.js"></script>
+
   <meta charset="UTF-8">
   <title>FFMPEG Player </title>
   <style>
     video{background: color:red ;}
   </style>
-</head>
 
+  <br><br><br><br>
+
+
+</head>
 
   <body>
 
     <label for="input">Choose a video file to process:</label>
+	<p>&nbsp;</p>
     <input type="file" id="input" name="input_video" required multiple accept="video/mp4, video/mov">
+	<br> <br> <br>
     <video id="myVideo" width="320" height="240" controls style="display: none;"></video>
-    <br> <br> <br>
+	<br> <br> <br>
+	<p>&nbsp;</p>
+	<br> <br> <br>
+    <div id="sliderID"></div>
+
+
+    <script>
+
+var slider = document.getElementById('sliderID');
+
+console.log(typeof(slider));
+noUiSlider.create(slider, {
+    start: 1,
+	  step: 1,
+	  tooltips: true,
+    range: {
+        'min': 0,
+        'max': 8
+    }
+  });
+</script>
+
+
+  <!--  <br> <br> <br>
+    <label for="input">Choose a video file to process:</label>
+  <p>&nbsp;</p>
+    <input type="file" id="inputVideoFile" name="input_video" required multiple accept="video/mp4, video/mov">
+  <br> <br> <br>
+    <video id="myVideoFile" width="320" height="240" controls style="display: none;"></video>
+  <br> <br> <br>
+  <p>&nbsp;</p>
+  <br> <br> <br>-->
+    <h1 style="color: green">Working Parameters</h1>
+	 <label for="widthFrame">Width Frame:</label>
+   <input type="int" id="widthFrame" placeholder="Width Frame" />
+	 <br>
+	 <br>
+	 <label for="heightFrame">Height Frame:</label>
+	 <input type="int" id="heightFrame" placeholder="Height Frame" />
+	 <br>
+	 <br>
+	 <label for="CuttingFileStartTime">Cutting File: Start Time:</label>
+	 <input type="int" id="CuttingFileStartTime" placeholder="Cutting File: Start Time" />
+	 <br>
+	 <br>
+	 <label for="CuttingFileEndTime">Cutting File: End Time:</label>
+	 <input type="int" id="CuttingFileEndTime" placeholder="Cutting File: End Time" />
+	 <br>
+	 <br>
+	 <label for="FirstAnnotatedLine">First Annotated Line:</label>
+	 <input type="text" id="FirstAnnotatedLine" placeholder="First Annotated Line" />
+	 <br>
+   <br>
+   <label for="StartTimeFirstAnnotatedLine">Start Time - First Annotated Line:</label>
+   <input type="int" id="StartTimeFirstAnnotatedLine" placeholder="Start Time - First Annotated Line" />
+   <br>
+   <br>
+   <label for="EndTimeFirstAnnotatedLine">End Time - First Annotated Line:</label>
+   <input type="int" id="EndTimeFirstAnnotatedLine" placeholder="End Time - First Annotated Line" />
+   <br>
+
+   <br>
+	 <label for="SecondAnnotatedLine">Second Annotated Line:</label>
+	 <input type="text" id="SecondAnnotatedLine" placeholder="Second Annotated Line" />
+	 <br>
+   <br>
+   <label for="StartTimeSecondAnnotatedLine">Start Time - Second Annotated Line:</label>
+   <input type="int" id="StartTimeSecondAnnotatedLine" placeholder="Start Time - Second Annotated Line" />
+   <br>
+   <br>
+   <label for="EndTimeSecondAnnotatedLine">End Time - Second Annotated Line:</label>
+   <input type="int" id="EndTimeSecondAnnotatedLine" placeholder="End Time - Second Annotated Line" />
+   <br>
+
+   <br>
+   <label for="ThirdAnnotatedLine">Third Annotated Line:</label>
+   <input type="text" id="ThirdAnnotatedLine" placeholder="Third Annotated Line" />
+   <br>
+   <br>
+   <label for="StartTimeThirdAnnotatedLine">Start Time - Third Annotated Line:</label>
+   <input type="int" id="StartTimeThirdAnnotatedLine" placeholder="Start Time - Third Annotated Line" />
+   <br>
+   <br>
+   <label for="EndTimeThirdAnnotatedLine">End Time - Third Annotated Line:</label>
+   <input type="int" id="EndTimeThirdAnnotatedLine" placeholder="End Time - Third Annotated Line" />
+   <br>
+
+	 <br>
+	 <button onclick="sendData()">Send</button>
+	 <p id="result" style="color: orange"></p>
+   <br><br><br>
     <hr>
+
+    <form method="POST" action="/profile-select-time-multiple-videos" enctype="multipart/form-data">
+        <div>
+            <label>profile-select-time-multiple-videos</label>
+            <input type="file" name="profile-files" required multiple  />
+          <!--  <video id="video" width="320" height="240" controls style="display: none;"></video>-->
+             <div id="myData1"></div>
+        </div>
+
+        <div>
+            <input type="submit" value="Upload" />
+        </div>
+    </form>
+     <hr>
 
     <form method="POST" action="/profile-upload-single" enctype="multipart/form-data">
         <div>
-            <label>Upload profile picture</label>
+            <label>Upload single profile picture</label>
             <input type="file" name="profile-file" required accept="video/*"/>
           <!--  <video id="video" width="320" height="240" controls style="display: none;"></video>-->
              <div id="myData"></div>
@@ -30,17 +143,51 @@
             <input type="submit" value="Upload" />
         </div>
     </form>
+    <br>
+      <hr>
+    <form method="POST" action="/profile-upload-multiple" enctype="multipart/form-data">
+        <div>
+            <label>Upload multiple profile picture</label>
+            <input type="file" name="profile-files" required multiple  />
+          <!--  <video id="video" width="320" height="240" controls style="display: none;"></video>-->
+             <div id="myData1"></div>
+        </div>
+
+        <div>
+            <input type="submit" value="Upload" />
+        </div>
+    </form>
+      <hr>
+
 
 
     <hr>
-
-
-    <form method="POST" action="/profile-concatenate-multiple-videos" enctype="multipart/form-data">
+    <form method="POST" action="/profile-select-time-multiple-videos" enctype="multipart/form-data">
       <div>
-        <label>Upload multiple files</label>
+        <label>Select time </label>
         <input type="file" name="profile-files" required multiple  />
       </div>
       <div>
+        <label>Select time</label>
+        <input  id="input" name="input_video" type="submit" value="Upload" />
+        <video id="myProcessedVideo" width="320" height="240" controls style="display: none;"></video>
+       </div>
+      </form>
+    <hr>
+
+
+    <hr>
+    <form method="POST" action="/profile-concatenate-multiple-videos" enctype="multipart/form-data">
+      <div>
+        <label>Send the videos file to the server, concatenate them, and show the resulted video</label>
+        <input type="file" name="profile-files" required multiple  />
+      </div>
+      <div>
+        <input type="text" id="text1"></input>
+        <input type="button" id="button1" value="Add" onclick="add_element_to_array();"></input>
+        <input type="button" id="button2" value="Display" onclick="display_array();"></input>
+        <div id="Result"></div>
+        <br>
         <label>Send the videos file to the server, concatenate them, and show the resulted video</label>
         <input  id="input" name="input_video" type="submit" value="Upload" />
         <video id="myProcessedVideo" width="320" height="240" controls style="display: none;"></video>
@@ -49,6 +196,7 @@
     <hr>
 
     <script>
+
 
       document.getElementById("input").addEventListener("change", function() {
       var media = URL.createObjectURL(this.files[0]);
@@ -67,6 +215,147 @@
         div.innerHTML = 'Name: ' + data[i].firstName + ' ' + data[i].lastName;
         mainContainer.appendChild(div);
     }
+
+
+function sendData() {
+	 var widthFrame = document.getElementById("widthFrame").value;
+   console.log('widthFrame = ', widthFrame);
+	 var heightFrame = document.getElementById("heightFrame").value;
+   console.log('heightFrame = ', heightFrame);
+	 var cuttingFileStartTime = document.getElementById("CuttingFileStartTime").value;
+	 var cuttingFileEndTime = document.getElementById("CuttingFileEndTime").value;
+
+   var firstAnnotatedLine = document.getElementById("FirstAnnotatedLine").value;
+   var startTimeFirstAnnotatedLine = document.getElementById("StartTimeFirstAnnotatedLine").value;
+   var endTimeFirstAnnotatedLine = document.getElementById("EndTimeFirstAnnotatedLine").value;
+
+   var secondAnnotatedLine = document.getElementById("SecondAnnotatedLine").value;
+   var startTimeSecondAnnotatedLine = document.getElementById("StartTimeSecondAnnotatedLine").value;
+   var endTimeSecondAnnotatedLine = document.getElementById("EndTimeSecondAnnotatedLine").value;
+
+   var thirdAnnotatedLine = document.getElementById("ThirdAnnotatedLine").value;
+   var startTimeThirdAnnotatedLine = document.getElementById("StartTimeThirdAnnotatedLine").value;
+   var endTimeThirdAnnotatedLine = document.getElementById("EndTimeThirdAnnotatedLine").value;
+   var result = document.getElementById("result");
+
+   //var inputVideoFile = document.getElementById("inputVideoFile").addEventListener("change", function() {
+   //var media = URL.createObjectURL(this.files[0]);
+   //var myVideoFile = document.getElementById("myVideoFile");
+   //video.src = media;
+   //video.style.display = "block";
+   //video.play();
+   //});
+
+
+		fetch("/jsondata", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify({
+                          widthFrame: widthFrame,
+			                    heightFrame: heightFrame,
+												  cuttingFileStartTime: cuttingFileStartTime,
+												  cuttingFileEndTime: cuttingFileEndTime,
+												  firstAnnotatedLine: firstAnnotatedLine,
+                          startTimeFirstAnnotatedLine: startTimeFirstAnnotatedLine,
+                          endTimeFirstAnnotatedLine: endTimeFirstAnnotatedLine,
+											    secondAnnotatedLine: secondAnnotatedLine,
+                          startTimeSecondAnnotatedLine: startTimeSecondAnnotatedLine,
+                          endTimeSecondAnnotatedLine: endTimeSecondAnnotatedLine,
+                          thirdAnnotatedLine: thirdAnnotatedLine,
+                          startTimeThirdAnnotatedLine: startTimeThirdAnnotatedLine,
+                          endTimeThirdAnnotatedLine: endTimeThirdAnnotatedLine
+												}),
+		})
+		.then(function (response) {
+			return response.json();
+		})
+		.then(function (data) {
+			result.innerHTML = data.msg;
+		})
+		.catch(function (error) {
+			console.log(error);
+		});
+	}
+
+////////////////////////
+
+$(function () {
+           var $propertiesForm = $('.mall-category-filter');
+           var $body = $('body');
+
+           $body.on('click', '.js-mall-filter', function () {
+               var $input = $(this).find('input');
+               $(this).toggleClass('mall-filter__option--selected')
+               $input.prop('checked', ! $input.prop('checked'));
+               $propertiesForm.trigger('submit');
+           });
+           $body.on('click', '.js-mall-clear-filter', function () {
+               var $parent = $(this).closest('.mall-property');
+
+               $parent.find(':input:not([type="checkbox"])').val('');
+               $parent.find('input[type="checkbox"]').prop('checked', false);
+               $parent.find('.mall-filter__option--selected').removeClass('mall-filter__option--selected')
+
+               var slider = $parent.find('.mall-slider-handles')[0]
+               if (slider) {
+                   slider.noUiSlider.updateOptions({
+                       start: [slider.dataset.min, slider.dataset.max]
+                   });
+               }
+               $propertiesForm.trigger('submit');
+           });
+
+           $propertiesForm.on('submit', function (e) {
+               e.preventDefault();
+
+               $.publish('mall.category.filter.start')
+               $(this).request('categoryFilter::onSetFilter', {
+                   loading: $.oc.stripeLoadIndicator,
+                   complete: function (response) {
+                       $.oc.stripeLoadIndicator.hide()
+                       if (response.responseJSON.hasOwnProperty('queryString')) {
+                           history.replaceState(null, '', '?' +              response.responseJSON.queryString)
+                       }
+                       $('[data-filter]').hide()
+                       if (response.responseJSON.hasOwnProperty('filter')) {
+                           for (var filter of Object.keys(response.responseJSON.filter)) {
+                               $('[data-filter="' + filter + '"]').show();
+                           }
+                       }
+                       $.publish('mall.category.filter.complete')
+                   },
+                   error: function () {
+                       $.oc.stripeLoadIndicator.hide()
+                       $.oc.flashMsg({text: 'Fehler beim Ausführen der Suche.', class: 'error'})
+                       $.publish('mall.category.filter.error')
+                   }
+               });
+           });
+
+           $('.mall-slider-handles').each(function () {
+               var el = this;
+               noUiSlider.create(el, {
+                   start: [el.dataset.start, el.dataset.end],
+                   connect: true,
+                   tooltips: true,
+                   range: {
+                       min: [parseFloat(el.dataset.min)],
+                       max: [parseFloat(el.dataset.max)]
+                   },
+                   pips: {
+                       mode: 'range',
+                       density: 20
+                   }
+               }).on('change', function (values) {
+                   $('[data-min="' + el.dataset.target + '"]').val(values[0])
+                   $('[data-max="' + el.dataset.target + '"]').val(values[1])
+                   $propertiesForm.trigger('submit');
+               });
+           })
+       })
+
 
      </script>
   </body>

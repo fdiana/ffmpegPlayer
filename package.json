@@ -21,8 +21,11 @@
     "ffprobe-static": "^3.1.0",
     "fluent-ffmpeg": "^2.1.2",
     "fs": "^0.0.1-security",
+    "jsdom": "^20.0.3",
     "multer": "^1.4.5-lts.1",
+    "nouislider": "^15.6.1",
     "p-queue": "^7.3.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "wnumb": "^1.2.0"
   }
 }
