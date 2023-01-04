@@ -50,7 +50,8 @@ app.post("/jsondata", function (req, res) {
 
  //const jsonContent = JSON.parse(req);
 	res.json({ msg:
-						 `Width frame is ${req.body.widthFrame}, Height frame is ${req.body.heightFrame},
+						 `Input video file is ${req.body.inputVideoFile},
+						 Width frame is ${req.body.widthFrame}, Height frame is ${req.body.heightFrame},
              Cutting File: Start Time is ${req.body.cuttingFileStartTime}, Cutting File: End Time is ${req.body.cuttingFileEndTime},
              First annotated line is ${req.body.firstAnnotatedLine},
 						 Start Time - First Annotated Line ${req.body.startTimeFirstAnnotatedLine},
@@ -65,9 +66,16 @@ app.post("/jsondata", function (req, res) {
 const data = JSON.stringify(req.body);
 console.log(req.body);
 
- //let outputFileName = './' + req.body.fileName + 'WorkingParameters.json';
- let outputFileName = './myjsonfile.json';
- fsProcess.writeFileSync( outputFileName, data, (err) =>{
+let outputFileName = req.body.inputVideoFile;
+console.log("outputFile =", outputFileName)
+let outputFileLength = outputFileName.length;
+console.log("outputFileLength = ", outputFileLength)
+let lengthName = outputFileLength - 4;
+outputFileNameJSON = './' + outputFileName.substr(0,lengthName) + "WorkingParameters.json";
+console.log("outputFileNameJSON = ", outputFileNameJSON)
+
+ //let outputFileNameJSON = './myjsonfile.json';
+ fsProcess.writeFileSync(outputFileNameJSON, data, (err) =>{
    if (err) throw err;
   console.log('Data written to file');
  });
@@ -240,16 +248,14 @@ app.post('/profile-upload-multiple', upload.array('profile-files', 12), function
     let lengthFrame = 640;
     var response = '<a href="/">Home</a><br>'
     response += "Files uploaded successfully.<br>"
-    console.log(req.files.length)
-
+    console.log(req.files.length);
 
     for(var i=0;i<req.files.length;i++){
           var lengthFile = req.files[i].filename.length;
           console.log(lengthFile);
           var fileName = req.files[i].filename;
           console.log(fileName);
-        const pathForExe =
-            'C:\\Programs\\ffmpeg\\ffmpeg-2021-04-25-git-d98884be41-full_build\\bin\\ffmpeg.exe ' +
+        const pathForExe = ffmpegExePath +
             ' -i C:\\Diana\\2022_Diana\\CreatingWebsites\\ffmpegPlayer\\' + req.files[i].path +
             ' -c:a copy -s ' + widthFrame + 'x' + lengthFrame +
             ' .\\OutputFiles\\' + fileName.substr(0, lengthFile-4)+ 'Resized.mp4';
@@ -358,7 +364,7 @@ app.post("/profile-concatenate-multiple-videos",  upload.array('profile-files', 
 
 /////////////////////////
 //
-//  Read relevant info from JSON files
+//  Read relevant info from JSON files - original mp4 videos
 //
 //////////////////////////
 let frameWidth = [];
@@ -448,6 +454,7 @@ let data = JSON.parse(rawdata);
 console.log(data);
 
 let firstAnnotatedLine = data.firstAnnotatedLine;
+console.log('firstAnnotatedLine=', firstAnnotatedLine);
 let startTimeFirstAnnotatedLine = data.startTimeFirstAnnotatedLine;
 let endTimeFirstAnnotatedLine = data.endTimeFirstAnnotatedLine;
 

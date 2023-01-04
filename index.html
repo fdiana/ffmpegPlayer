@@ -27,6 +27,9 @@
 	<br> <br> <br>
 	<p>&nbsp;</p>
 	<br> <br> <br>
+
+
+<!--
     <div id="sliderID"></div>
 
 
@@ -45,18 +48,16 @@ noUiSlider.create(slider, {
     }
   });
 </script>
+-->
 
-
-  <!--  <br> <br> <br>
+  <br> <br> <br>
+    <h1 style="color: green">Working Parameters</h1>
     <label for="input">Choose a video file to process:</label>
   <p>&nbsp;</p>
     <input type="file" id="inputVideoFile" name="input_video" required multiple accept="video/mp4, video/mov">
   <br> <br> <br>
-    <video id="myVideoFile" width="320" height="240" controls style="display: none;"></video>
-  <br> <br> <br>
-  <p>&nbsp;</p>
-  <br> <br> <br>-->
-    <h1 style="color: green">Working Parameters</h1>
+    <video id="myVideoFile" width="320" height="240" controls style="display: yes;"></video>
+   <br> <br> <br>
 	 <label for="widthFrame">Width Frame:</label>
    <input type="int" id="widthFrame" placeholder="Width Frame" />
 	 <br>
@@ -116,6 +117,23 @@ noUiSlider.create(slider, {
 	 <p id="result" style="color: orange"></p>
    <br><br><br>
     <hr>
+
+  <script>
+    document.getElementById("inputVideoFile").addEventListener("change", function() {
+    var media = URL.createObjectURL(this.files[0]);
+    console.log("this.files = ");
+    console.log(this.files);
+    var video = document.getElementById("myVideoFile");
+    video.src = media;
+    //video.style.display = "block";
+    video.play();
+});
+
+
+  </script>
+
+
+
 
     <form method="POST" action="/profile-select-time-multiple-videos" enctype="multipart/form-data">
         <div>
@@ -237,6 +255,8 @@ function sendData() {
    var startTimeThirdAnnotatedLine = document.getElementById("StartTimeThirdAnnotatedLine").value;
    var endTimeThirdAnnotatedLine = document.getElementById("EndTimeThirdAnnotatedLine").value;
    var result = document.getElementById("result");
+   var inputVideoFile = document.getElementById("inputVideoFile").files[0].name;
+
 
    //var inputVideoFile = document.getElementById("inputVideoFile").addEventListener("change", function() {
    //var media = URL.createObjectURL(this.files[0]);
@@ -252,7 +272,7 @@ function sendData() {
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify({
+		body: JSON.stringify({inputVideoFile: inputVideoFile,
                           widthFrame: widthFrame,
 			                    heightFrame: heightFrame,
 												  cuttingFileStartTime: cuttingFileStartTime,
