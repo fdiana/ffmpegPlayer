@@ -1,0 +1,50 @@
+<%- include('partials/header') %>
+
+<div class="jumbotron text-center">
+  <div class="container">
+    <i class="fas fa-key fa-6x"></i>
+    <h1 class="display-3">Video processing</h1>
+
+    <hr>
+    <a class="btn btn-light btn-lg" href="/logout" role="button">Log Out</a>
+
+  </div>
+</div>
+
+<div id="videoal">
+      <table>
+          <tr>
+              <td>
+                <div>
+                    <form method="POST" action="/profile-upload-single" enctype="multipart/form-data">
+                      <label>Upload profile picture</label>
+                      <input type="file" id="inputVideoFile" name="profile-file" required/>
+
+                  </div>
+                  <div>
+                    <label>Video from Server</label>
+                    <video id="videoPlayer1" title="Video from Server"  width="320" height="240" controls style="display:  ;"" autoplay >
+                       <source src="/video" type="video/mp4" />
+                    </video>
+                  </div>
+                  <div>
+                      <input type="submit" value="Upload" />
+                  </div>
+             </td>
+             <td>
+
+            <!--   <div>
+                 <label>Annotated Video from Server</label>
+                 <video id="videoPlayer2" title="Video from Server" width="420" controls muted="muted" autoplay>
+                    <source src="/video2" type="video/mp4" />
+                 </video>
+               </div>-->
+             </td>
+          </tr>
+      </table>
+</div>
+
+  </form>
+
+
+<%- include('partials/footer') %>

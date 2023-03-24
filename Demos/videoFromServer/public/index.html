@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<head>
+    <title>Profile form</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+      <div id="videoal">
+        <table>
+            <tr>
+                <td>
+                  <div>
+                      <form method="POST" action="/profile-upload-single" enctype="multipart/form-data">
+                        <label>Upload profile picture</label>
+                        <input type="file" id="inputVideoFile" name="profile-file" required/>
+                    </div>
+                    <div>
+                        <input type="submit" value="Upload" />
+                    </div>
+                    <div>
+                      <label>Video from Server</label>
+                      <video id="videoPlayer1" title="Video from Server" width="420" controls muted="muted" autoplay>
+                         <source src="/video" type="video/mp4" />
+                      </video>
+                    </div>
+
+               </td>
+               <td>
+
+                 <div>
+                   <label>Annotated Video from Server</label>
+                   <video id="videoPlayer2" title="Video from Server" width="420" controls muted="muted" autoplay>
+                      <source src="/video" type="video/mp4" />
+                   </video>
+                 </div>
+               </td>
+            </tr>
+        </table>
+</div>
+
+    </form>
+
+
+</body>
+</html>

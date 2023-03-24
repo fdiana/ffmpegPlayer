@@ -1,0 +1,128 @@
+
+
+
+<!DOCTYPE html>
+<html>
+<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+<head>
+  <!--link rel="stylesheet"  type="text/css" href=" /public/styles.css" -->
+  <meta charset="UTF-8">
+  <title>FFMPEG Player </title>
+  <style>
+    video{background: color:red ;}
+  </style>
+
+  <br><br><br><br>
+</head>
+
+  <body>
+
+    <form method="POST" action="/profile-upload-multiple" enctype="multipart/form-data">
+        <div>
+            <label>Upload multiple profile picture</label>
+            <input type="file" name="profile-files" id="multipleFiles" required multiple  />
+            <!--<video id="video" controls style="display: ;">
+              <source src="/video" type="video/mp4" />
+           </video>-->
+          <!--<div id="myData1"></div>-->
+        </div>
+
+        <div>
+            <!--<input type="submit" id="multipleFilesSubmitted" value="Upload"/>-->
+            <input type="button" id="multipleFilesSubmitted" value="Upload" onClick="callDropDownMenu()" ></input>
+        </div>
+
+    </form>
+
+
+    <form name="test">
+    <table>
+      <tr>
+        <td class='dataleft'>Product: </td>
+        <td><select id='inptProduct' name='inptProduct'  onchange="update()"> </select></td>
+      </tr>
+    </table>
+  </form>
+
+
+
+<script>
+
+  function update () {
+   var params = "bar=foo";
+   var req = new XMLHttpRequest();
+   alert("Index changed!");
+   req.open("GET","/jsonFiles/jsonVideoMultipleFiles.json", true);
+   req.onreadystatechange = function (foo) {
+       if (req.readyState == 4){
+               alert(document.getElementById("inptProduct").innerHTML = req.responseText);
+       }
+   }
+   req.send(null);
+}
+
+
+let xhr = new XMLHttpRequest();
+xhr.open("GET", "/jsonFiles/jsonVideoMultipleFiles.json");
+xhr.send();
+xhr.responseType = "json";
+xhr.onload = () => {
+  if (xhr.readyState == 4 && xhr.status == 200) {
+    const data = xhr.response;
+    console.log(data);
+  } else {
+    console.log(`Error: ${xhr.status}`);
+  }
+};
+</script>
+
+
+
+
+  <script>
+     window.onload = callDropDownMenu();
+
+    function callDropDownMenu() {
+      var filesUploaded = document.getElementById('multipleFiles').files;
+
+      var iP = document.getElementById("inptProduct");
+
+      //var mylist = document.getElementById("myList");
+      //var arrFilesUploaded = "";
+      var arrFilesUploaded = "";
+      for (var i = 0; i < filesUploaded.length ; i++)
+      {
+        arrFilesUploaded += '<option value=' + filesUploaded[i].name + '>' + filesUploaded[i].name + '</option>';
+        alert(arrFilesUploaded)
+        let option = document.createElement("option");
+        option.setAttribute('value', filesUploaded[i].name);
+
+        let optionText = document.createTextNode(filesUploaded[i].name);
+        option.appendChild(optionText);
+
+        iP.appendChild(option);
+
+      }
+
+    }
+
+  </script>
+
+    <script>
+      /*
+    function getVideoFiles(){
+      var filesUploaded = document.getElementById('multipleFiles').files;
+         var arrFilesUploaded = [];
+      for (var i = 0; i < filesUploaded.length ; i++)
+      {
+        //alert(filesUploaded[i].name);
+        arrFilesUploaded [i] = '<option value=' + filesUploaded[i].name + '>' + filesUploaded[i].name + '</option>';
+        alert(arrFilesUploaded[i])
+      }
+     }
+*/
+    </script>
+
+  </body>
+
+</html>

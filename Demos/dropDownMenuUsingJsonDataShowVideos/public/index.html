@@ -1,0 +1,140 @@
+
+
+
+<!DOCTYPE html>
+<html>
+<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+<head>
+  <!--link rel="stylesheet"  type="text/css" href=" /public/styles.css" -->
+  <meta charset="UTF-8">
+  <title>FFMPEG Player </title>
+  <style>
+    video{background: color:red ;}
+  </style>
+
+  <br><br><br><br>
+</head>
+
+  <body>
+
+    <form method="POST" action="/profile-upload-multiple" enctype="multipart/form-data">
+        <div>
+            <label>Upload multiple profile picture</label>
+            <input type="file" name="profile-files" id="multipleFiles" required multiple  />
+            <!--<video id="video" controls style="display: ;">
+                <source src="/selectVideoFile" type="video/mp4" />
+           </video>-->
+
+        </div>
+
+        <div>
+            <input type="submit" id="multipleFilesSubmitted" value="Upload"/>
+            <!--<button type="submit" id="multipleFilesSubmitted" value="Upload" onClick="callDropDownMenu()" ></button>-->
+        </div>
+
+    </form>
+
+
+      <form method="POST" >
+      <select id="sel" onchange="show(this)">
+          <option value="">-- Select --</option>
+      </select>
+      <video id="videoPlayer" controls style="display: ;"">
+          <source src= "/selectVideoFile" type="video/mp4" />
+      </video>
+      <!--<video id="videoPlayer2" controls style="display: ;"">
+          <source src= "/selectVideoFile2" type="video/mp4" />
+      </video>-->
+        <!--<input type="button" id="dropDownBox" value="Upload"/>-->
+      </form>
+
+
+    <p id="msg"></p>
+
+
+    <script>
+        window.onload = populateSelect();
+
+        function populateSelect() {
+            // CREATE AN XMLHttpRequest OBJECT, WITH GET METHOD.
+            var xhr = new XMLHttpRequest(),
+                method = 'GET',
+                overrideMimeType = 'application/json',
+                url = './jsonFiles/jsonVideoMultipleFiles.json';        // ADD THE URL OF THE FILE.
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+
+                    // PARSE JSON DATA.
+                    let video = JSON.parse(xhr.responseText);
+                    //alert(video)
+                    let ele = document.getElementById('sel');
+                    for (let i = 0; i < video.length; i++) {
+                        // BIND DATA TO <select> ELEMENT.
+                        ele.innerHTML = ele.innerHTML +
+                          '<option value="' + video[i].index +'">' + video[i].inputVideoFile + '</option>';
+                    }
+                    //alert(ele.innerHTML)
+                }
+            };
+            xhr.open(method, url, true);
+            xhr.send();
+        }
+
+        function show(ele) {
+            // GET THE SELECTED VALUE FROM <select> ELEMENT AND SHOW IT.
+
+            //alert(ele.innerHTML)
+            var msg = document.getElementById('msg');
+            msg.innerHTML = 'Selected Video: <b>' + ele.options[ele.selectedIndex].text + '</b> </br>' +
+                'ID: <b>' + ele.value + '</b>' ;
+
+
+              var xhr = new XMLHttpRequest();
+              xhr.open('POST', '/selectVideoFile', true);
+              xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+              xhr.onload = function () {
+                  // do something to response
+                  console.log(this.responseText);
+              };
+              xhr.send(ele.options[ele.selectedIndex].text);
+              //document.getElementById("selectVideoFile").play();
+              //document.getElementById("selectVideoFile").load();
+
+              //xhr.send(ele.value);
+
+            var myVideo = document.getElementById('videoPlayer');
+
+            myVideo.src =  "./uploads/" + ele.options[ele.selectedIndex].text;
+            alert(ele.options[ele.selectedIndex].text)
+
+      /*    var xhrShow = new XMLHttpRequest(),
+           method = 'GET',
+           overrideMimeType = 'application/json',
+           url = "http://192.168.0.20:3000/sendLinkSelectVideoFile";
+           xhrShow.onload = function () {
+               if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+
+                var jsonStringSelectedVideo = JSON.parse(xhr.responseText);
+                var nameOfSelectedVideo = jsonStringSelectedVideo.inputVideoFile;
+                var pathOfSelectedVideo = jsonStringSelectedVideo.inputVideoFilePath;
+
+
+                alert(pathOfSelectedVideo)
+                //alert(ele.options[ele.selectedIndex].text)
+                var myVideo = document.getElementById('videoPlayer2');
+                myvideo.src = pathOfSelectedVideo;
+
+               }
+           };
+           xhrShow.open(method, url, true);
+           xhrShow.send();*/
+
+           window.location.reload();
+
+        }
+    </script>
+
+  </body>
+
+</html>
