@@ -227,10 +227,12 @@
                 //document.getElementById("videoPlayer2").load();
 
           };
+
+
           alert("alert")
           alert(localStorage.getItem("optionSelected"));
 
-          
+
           if (typeof(Storage) !== "undefined") {
             // Store
             //localStorage.setItem("msg", "Smith");
@@ -256,11 +258,11 @@
 
              //let ele = document.getElementById('sel');
               alert("writeTimeCuttingParameters")
-              var cuttingStartTime = document.getElementById("cuttingStartTime").value;
-              var cuttingEndTime = document.getElementById("cuttingEndTime").value;
+              var cuttingStartTimeVal = document.getElementById("cuttingStartTime").value;
+              var cuttingEndTimeVal = document.getElementById("cuttingEndTime").value;
 
-              localStorage.setItem("cuttingStartTime", cuttingStartTime);
-              localStorage.setItem("cuttingEndTime", cuttingStartTime);
+              localStorage.setItem("cuttingStartTimeLS", cuttingStartTimeVal);
+              localStorage.setItem("cuttingEndTimeLS", cuttingStartTimeVal);
 
             //fetch("http://login:password@192.168.0.20:3000/jsondataTimeCuttingParameters", {
             fetch("/jsondataTimeCuttingParameters", {
@@ -286,6 +288,25 @@
                   //document.getElementById("videoPlayer2").load();
 
           };
+
+          if (typeof(Storage) !== "undefined") {
+            // Store
+            //localStorage.setItem("msg", "Smith");
+            // Retrieve
+
+            document.getElementById("cuttingStartTime").innerHTML = localStorage.getItem("cuttingStartTimeLS");
+            document.getElementById("cuttingEndTime").innerHTML = localStorage.getItem("cuttingEndTimeLS");
+
+
+          } else {
+            document.getElementById("msg").innerHTML = "Sorry, your browser does not support Web Storage...";
+          }
+
+
+          //var eleInt = document.getElementById("sel");
+          //var textOpt = eleInt.options[eleInt.selectedIndex].text
+
+          //textOpt = localStorage.getItem("optionSelected");
 
             function writeAnnotationParameters(ele){
               //let ele = document.getElementById('sel');
