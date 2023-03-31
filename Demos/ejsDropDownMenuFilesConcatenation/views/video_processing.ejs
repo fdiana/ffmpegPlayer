@@ -1,0 +1,427 @@
+<%- include('partials/header') %>
+
+<div class="jumbotron text-center">
+  <div class="container">
+    <i class="fas fa-key fa-6x"></i>
+    <h1 class="display-3">Video processing</h1>
+
+    <hr>
+    <a class="btn btn-light btn-lg" href="/logout" role="button">Log Out</a>
+
+  </div>
+</div>
+
+<body>
+<!--
+<div id="videoal">
+      <table>
+          <tr>
+              <td>
+                <div>
+                    <form method="POST" action="/profile-upload-single" enctype="multipart/form-data">
+                      <label>Upload profile picture</label>
+                      <input type="file" id="inputVideoFile" name="profile-file" required/>
+
+                  </div>
+                  <div>
+                    <label>Video from Server</label>
+                    <video id="videoPlayer1" title="Video from Server"  width="320" height="240" controls style="display:  ;"" autoplay >
+                      <source src="/video" type="video/mp4" />
+                    </video>
+                  </div>
+                  <div>
+                      <input type="submit" value="Upload" />
+                  </div>
+             </td>
+          </tr>
+      </table>
+</div>
+
+  </form>-->
+
+  <form method="POST" action="/profile-upload-multiple" enctype="multipart/form-data">
+     <div>
+         <label>Upload multiple profile picture</label>
+         <input type="file" name="profile-files" id="multipleFiles" required multiple  />
+     </div>
+
+     <div>
+         <input type="submit" id="multipleFilesSubmitted" value="Upload"/>
+         <!--<button type="submit" id="multipleFilesSubmitted" value="Upload" onClick="callDropDownMenu()" ></button>-->
+     </div>
+
+ </form>
+
+
+<div id="id_msg">
+    <p id="msg"></p>
+</div>
+
+  <form method="POST"  action="/workingParameters" enctype="multipart/form-data">
+    <select id="sel" onchange="show(this)">
+        <option value="">-- Select --</option>
+    </select>
+    <table style="border:1px solid none">
+       <tr>
+          <td><label name="originalVideo">Original Video</label></td>
+          <td><label name="timeCuttedVideo">Time Cutted Video </label></td>
+          <td><label name="annotatedVideo">Annotated Video</label></td>
+       </tr>
+       <tr>
+        <!-- <div id = "mydivShowVideos" onchange = "showVideos(this)">-->
+           <td>
+           <video id="videoPlayer1" width="320" height="240" controls = "controls" style="display: ;"">
+               <source src="/selectVideoFileOriginal" type="video/mp4" />
+           </video>
+           <td>
+              <video id="videoPlayer2" width="320" height="240" controls  = "controls" style="display: ;"">
+                <source src="/selectVideoFileTimeCuttingParameters" type="video/mp4" />
+             </video>
+           </td>
+           <td>
+             <video id="videoPlayer3" width="320" height="240" controls  = "controls" style="display: ;"">
+               <source src="/selectVideoFileAnnotationParameters" type="video/mp4" />
+            </video>
+          </td>
+        <!--</div>-->
+       </tr>
+     <tr>
+         <td> </td>
+         <td>  <input type="int" id="cuttingStartTime" placeholder="Cutting: Start Time" /> </td>
+         <td>  <input type="int" id="startTimeAnnotation" placeholder="Start Time - Annotation" /> </td>
+       </tr>
+       <tr>
+         <td> </td>
+         <td>  <input type="int" id="cuttingEndTime" placeholder="Cutting: End Time" /> </td>
+         <td>  <input type="int" id="endTimeAnnotation" placeholder="End Time Annotation" /> </td>
+       </tr>
+       <tr>
+         <td> </td>
+         <td> <button id="timeCutting" value="timeCuttingSend" onclick="writeTimeCuttingParameters(sel)"> Time Cutting Send </button> </td>
+
+         <td>  <input type="text" id="firstAnnotatedLine" placeholder="First Annotated Line" /> </td>
+       </tr>
+       <tr>
+         <td> </td>
+         <td> </td>
+         <td> <input type="text" id="secondAnnotatedLine" placeholder="Second Annotated Line" /> </td>
+       </tr>
+       <tr>
+         <td> </td>
+         <td> </td>
+         <td> <input type="text" id="thirdAnnotatedLine" placeholder="Third Annotated Line" /> </td>
+       </tr>
+       <tr>
+         <td> </td>
+         <td> </td>
+         <td> <button id="annotation" value="annotation" onclick="writeAnnotationParameters(sel)"> Annotation </button> </td>
+
+       </tr>
+     </table>
+      <!--<input type="button" id="dropDownBox" value="Upload"/>-->
+    </form>
+
+
+    <form method="POST" action="/prepareConcatenateVideos" enctype="multipart/form-data">
+      <table style="border:1px solid none">
+        <tr>
+          <td><select id="sel2">
+            <option value="select2Video">-- Select Video --</option>
+          </select></td>
+            <td><select value ="selForConcatenation" id="selForConcatenation">
+                <option value="selVideoForConcatenation">Select Videos for Concatenation</option>
+            </select></td>
+          </tr>
+          <tr>
+            <td>  <button onclick="sendVideoForConcatenation(sel2, selForConcatenation)">Choose Video for Concatenation  </button></td>
+            <td>  <button onclick="returnVideo(sel2, selForConcatenation)"> Deselect Video </button> </td>
+          </tr>
+      </table>
+      </form>
+
+      <form method="POST"  action="/concatenateVideos" enctype="multipart/form-data">
+      <div>
+        <label>Concatenated videos</label>
+        <video id="videoPlayerConcatenatedVideos" title="Concatenated videos"  width="320" height="240" controls style="display:  ;"" >
+          <source src="/videoConcatenatedSrc" type="video/mp4" />
+        </video>
+          <!--<input type="submit" id="concatenateOrderedVideos" value="Concatenate the videos"/>-->
+          <input type="submit" id="concatenateOrderedVideos" value="Concatenate the videos"/>
+          <!--<button type="submit" id="multipleFilesSubmitted" value="Upload" onClick="callDropDownMenu()" ></button>-->
+
+      </div>
+    </form>
+
+
+
+  <script>
+          window.onload = populateSelect();
+          let ele = document.getElementById('sel');
+          function populateSelect() {
+              // CREATE AN XMLHttpRequest OBJECT, WITH GET METHOD.
+              var xhr = new XMLHttpRequest(),
+                  method = 'GET',
+                  overrideMimeType = 'application/json',
+                  //url = __dirname + './jsonFiles/jsonVideoMultipleFiles.json';        // ADD THE URL OF THE FILE.
+                  //url = "http://localhost:3000/workingParameters";
+                  //url = "http://192.168.0.20:3000/workingParameters"
+                  url = "http://192.168.0.20:3000/workingParameters"
+                  //url =  "./jsonFiles/jsonVideoMultipleFiles.json";
+              xhr.onreadystatechange = function () {
+                  if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+
+                      // PARSE JSON DATA.
+                      let video = JSON.parse(xhr.responseText);
+                      //alert(video)
+                      //let ele = document.getElementById('sel');
+                      let ele2 = document.getElementById('sel2');
+                      let ele3 = document.getElementById('sel3');
+                      for (let i = 0; i < video.length; i++) {
+                          // BIND DATA TO <select> ELEMENT.
+                          ele.innerHTML = ele.innerHTML +
+                            '<option value="' + video[i].index +'">' + video[i].inputVideoFile + '</option>';
+                          ele2.innerHTML = ele2.innerHTML +
+                            '<option value="' + video[i].index +'">' + video[i].inputVideoFile + '</option>';
+                      }
+
+                  }
+              };
+              xhr.open(method, url, true);
+              xhr.send();
+          }
+
+
+          function show(ele) {
+              // GET THE SELECTED VALUE FROM <select> ELEMENT AND SHOW IT.
+
+              //alert(ele.innerHTML)
+              var msg = document.getElementById('msg');
+              msg.innerHTML = 'Selected Video: <b>' + ele.options[ele.selectedIndex].text + '</b> </br>';
+
+                var xhr = new XMLHttpRequest();
+                //xhr.open('POST', "http://login:password@192.168.0.20:3000/selectVideoFile", true);
+                xhr.open('POST', "/jsonSelectVideoFile", true);
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                xhr.onload = function () {
+                    // do something to response
+                    console.log(this.responseText);
+                };
+
+                xhr.send(ele.options[ele.selectedIndex].text);
+                alert("alert from show")
+                alert(ele.options[ele.selectedIndex].text);
+
+                localStorage.setItem("msg", msg.innerHTML);
+
+                localStorage.setItem("optionSelected",ele.options[ele.selectedIndex].text);
+
+                alert("alert after localStorage")
+                alert(localStorage.optionSelected);
+
+                //var msg = document.getElementById('msg');
+
+                //msg.innerHTML = 'Selected Video: <b>' + ele.options[ele.selectedIndex].text + '</b> </br>';
+                document.getElementById("videoPlayer1").load();
+                document.getElementById("videoPlayer2").load();
+                document.getElementById("videoPlayer3").load();
+                //document.getElementById("videoPlayer2").load();
+
+          };
+          alert("alert")
+          alert(localStorage.getItem("optionSelected"));
+
+          
+          if (typeof(Storage) !== "undefined") {
+            // Store
+            //localStorage.setItem("msg", "Smith");
+            // Retrieve
+            document.getElementById("msg").innerHTML = localStorage.getItem("msg");
+            var eleInt = document.getElementById("sel");
+            var textOpt = eleInt.options[eleInt.selectedIndex].text
+
+            textOpt = localStorage.getItem("optionSelected");
+            alert(textOpt);
+            alert(ele.options[ele.selectedIndex].text);
+
+            ele.options[ele.selectedIndex].text = localStorage.getItem("optionSelected");
+            alert(ele.options[ele.selectedIndex].text);
+
+
+          } else {
+            document.getElementById("msg").innerHTML = "Sorry, your browser does not support Web Storage...";
+          }
+
+
+          function writeTimeCuttingParameters(ele){
+
+             //let ele = document.getElementById('sel');
+              alert("writeTimeCuttingParameters")
+              var cuttingStartTime = document.getElementById("cuttingStartTime").value;
+              var cuttingEndTime = document.getElementById("cuttingEndTime").value;
+
+              localStorage.setItem("cuttingStartTime", cuttingStartTime);
+              localStorage.setItem("cuttingEndTime", cuttingStartTime);
+
+            //fetch("http://login:password@192.168.0.20:3000/jsondataTimeCuttingParameters", {
+            fetch("/jsondataTimeCuttingParameters", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({inputVideoFile: ele.options[ele.selectedIndex].text,
+                                        cuttingStartTime: cuttingStartTime,
+                                        cuttingEndTime: cuttingEndTime
+                                      }),
+                  })
+                  .then(function (response) {
+                    return response.json();
+                  })
+                  .then(function (data) {
+                    result.innerHTML = data.msg;
+                  })
+                  .catch(function (error) {
+                    console.log(error);
+                  });
+
+                  //document.getElementById("videoPlayer2").load();
+
+          };
+
+            function writeAnnotationParameters(ele){
+              //let ele = document.getElementById('sel');
+              alert("writeAnnotationParameters")
+              var startTimeAnnotation = document.getElementById("startTimeAnnotation").value;
+              console.log("startTimeAnnotation = ", startTimeAnnotation);
+              var endTimeAnnotation = document.getElementById("endTimeAnnotation").value;
+              console.log("endTimeAnnotation = ", endTimeAnnotation);
+              var firstAnnotatedLine = document.getElementById("firstAnnotatedLine").value;
+              console.log("firstAnnotatedLine = ", firstAnnotatedLine);
+              var secondAnnotatedLine = document.getElementById("secondAnnotatedLine").value;
+              console.log("secondAnnotatedLine = ", secondAnnotatedLine);
+              var thirdAnnotatedLine = document.getElementById("thirdAnnotatedLine").value;
+              console.log("thirdAnnotatedLine = ", thirdAnnotatedLine);
+
+             //fetch("http://login:password@192.168.0.20:3000/jsondataAnnotationParameters", {
+             fetch("/jsondataAnnotationParameters", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({inputVideoFile: ele.options[ele.selectedIndex].text,
+                                      startTimeAnnotation: startTimeAnnotation,
+                                      endTimeAnnotation: endTimeAnnotation,
+                                      firstAnnotatedLine: firstAnnotatedLine,
+                                      secondAnnotatedLine: secondAnnotatedLine,
+                                      thirdAnnotatedLine: thirdAnnotatedLine
+                                    }),
+                })
+                .then(function (response) {
+                  return response.json();
+                })
+                .then(function (data) {
+                  result.innerHTML = data.msg;
+                })
+                .catch(function (error) {
+                  console.log(error);
+                });
+
+                //window.location.reload();
+
+               /*
+                var inputVideoFile = ele.options[ele.selectedIndex].text;
+                alert(inputVideoFile)
+                var inputVideoFileLength = inputVideoFile.length;
+                alert(inputVideoFileLength)
+                var lengthName = inputVideoFileLength - 4;
+                alert(lengthName)
+                //var outputVideoFile = "./outputFiles/8_GMajorScale_and_AttwoodAllegroResizedTimeCutted.mp4";
+                var outputVideoFile = "./outputFilesWorkingParameters/" + inputVideoFile.substr(0,lengthName) + "ResizedAnnotated.mp4";
+                alert(outputVideoFile)
+                var myVideo3 = document.getElementById('videoPlayer3');
+                myVideo3.src = outputVideoFile;
+                */
+             }
+
+
+             function sendVideoForConcatenation(ele2, eleForConcatenation){
+           // BIND DATA TO <select> ELEMENT.
+           //if ((ele2.value != "select2Video") || (eleForConcatenation.value != "selVideoForConcatenation")){
+           if (ele2.value != "select2Video"){
+             eleForConcatenation.innerHTML = eleForConcatenation.innerHTML +
+               '<option value="' + ele2.options[ele2.selectedIndex].text +'">'
+                 + ele2.options[ele2.selectedIndex].text + '</option>';
+
+             let inputVideoFile = ele2.options[ele2.selectedIndex].text
+             let inputVideoFilePath = "uploads\\" +ele2.options[ele2.selectedIndex].text
+
+             ele2.remove(ele2.selectedIndex);
+
+
+             fetch("/jsonOrderedVideosFiles", {
+                   method: "POST",
+                   headers: {
+                     "Content-Type": "application/json",
+                   },
+                   body: JSON.stringify({inputVideoFile: inputVideoFile,
+                                         inputVideoFilePath: inputVideoFilePath
+                                       }),
+                   })
+                   .then(function (response) {
+                     return response.json();
+                   })
+                   .then(function (data) {
+                     result.innerHTML = data.msg;
+                   })
+                   .catch(function (error) {
+                     console.log(error);
+                   });
+           }
+
+         }
+
+         function returnVideo(ele2, eleForConcatenation) {
+
+             if (eleForConcatenation.value != "selVideoForConcatenation"){
+               ele2.innerHTML = ele2.innerHTML +
+               '<option value="' + eleForConcatenation.options[eleForConcatenation.selectedIndex].text +'">'
+                 + eleForConcatenation.options[eleForConcatenation.selectedIndex].text + '</option>';
+
+                 let inputVideoFile = eleForConcatenation.options[eleForConcatenation.selectedIndex].text
+                 let inputVideoFilePath = "uploads\\" +eleForConcatenation.options[eleForConcatenation.selectedIndex].text
+
+               eleForConcatenation.remove(eleForConcatenation.selectedIndex);
+
+
+             fetch("/jsonRemoveFromOrderedVideosFiles", {
+                   method: "POST",
+                   headers: {
+                     "Content-Type": "application/json",
+                   },
+                   body: JSON.stringify({inputVideoFile: inputVideoFile,
+                                         inputVideoFilePath: inputVideoFilePath
+                                       }),
+                   })
+                   .then(function (response) {
+                     return response.json();
+                   })
+                   .then(function (data) {
+                     result.innerHTML = data.msg;
+                   })
+                   .catch(function (error) {
+                     console.log(error);
+                   });
+           }
+         }
+
+
+
+      </script>
+
+
+</body>
+
+
+
+
+
+<%- include('partials/footer') %>
