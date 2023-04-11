@@ -262,7 +262,7 @@ console.log("app.post('/login'=================");
     if (err) {
       console.log(err);
     } else {
-     passport.authenticate("local")(req, res, function(){  
+     passport.authenticate("local")(req, res, function(){
        var dirUser = __dirname + '\\UsersCollections\\' + user.username;
        //console.log(dirUser)
        var dirUploads =   dirUser  + "\\" + 'uploads';
@@ -609,8 +609,8 @@ app.post('/workingParameters', function (req, res) {
 })
 
 
-app.get('/selectVideoFileOriginal', function (req, res) {
-  console.log("app.get(/selectVideoFileOriginal=================");
+app.get('/showVideoFileOriginal', function (req, res) {
+  console.log("app.get(/showVideoFileOriginal=================");
 
 
   console.log("req.user = ", req.user)
@@ -728,7 +728,7 @@ app.post('/jsonSelectVideoFile', function (req, res) {
                   if (err) throw err;
                     console.log('Data written to file');
                 });
-                res.redirect("/video_processing");
+              //  res.redirect("/video_processing");
               //}
               //catch(err) {
               //  console.error("Error - /profile-upload-multiple!");
@@ -739,57 +739,10 @@ app.post('/jsonSelectVideoFile', function (req, res) {
 
 })
 
-/*
-app.get('/sendLinkSelectVideoFile', function (req, res) {
-console.log("app.get(/sendLinkSelectVideoFile=================");
 
 
-//console.log(req.user)
-  if(req.isAuthenticated()){
-
-    var dirUser = __dirname + '\\UsersCollections\\' + req.user.username;
-    //console.log(dirUser)
-    var dirUploads =   dirUser  + "\\" + 'uploads';
-    //console.log(dirUploads)
-    var dirJsonFiles = dirUser  + "\\" + 'jsonFiles';
-    //console.log(dirJsonFiles)
-
-    let videoFileToShowJson = dirJsonFiles + "\\" + "selectedVideoFileForProcessing.json";
-
-          let rawdata = fs.readFileSync(videoFileToShowJson, (err, jsonString) => {
-          if (err) {
-            console.log("File read failed: - No json file", err);
-         return;
-        }
-        //console.log("File data:", jsonString);
-        });
-          let data = JSON.parse(rawdata);
-          //console.log("get video JSON data = ", data);
-
-          const videoFileName = data.inputVideoFile;
-
-          const videoPath = data.inputVideoFilePath;
-
-          var size = Object.keys(data).length;
-          console.log(size)
-          console.log(data)
-
-          //res.send(videoPath);
-          if(size==2){
-            res.send(videoPath);
-          }
-
-  }
-     else {
-       res.render("video_processing");
-   }
-
-
-})*/
-
-
-app.get("/selectVideoFileTimeCuttingParameters", function (req, res) {
-          console.log("app.get(/selectVideoFileTimeCuttingParameters=================");
+app.get("/showVideoFileTimeCuttingParameters", function (req, res) {
+          console.log("app.get(/showVideoFileTimeCuttingParameters=================");
 
           console.log("req.user = ", req.user)
           //console.log("req.body = ", req.body)
@@ -975,26 +928,7 @@ console.log("app.post(/jsondataTimeCuttingParameters=================");
                            console.log(data.toString());
                  });
 
-                ////////////////////////////////
-                //
-                //  Send the video to client
-                //
-                /////////////////////////////////
-
-          /*      let videoPath = dirOutputFilesWorkingParameters + "\\" + outputFileName.substr(0,lengthName) + "ResizedTimeCutted.mp4";
-                console.log("videoPath = ", videoPath)
-
-                const videoSize = fs.statSync(videoPath).size;
-
-                const rs = fs.createReadStream(videoPath);
-
-                // get size of the video file
-                const { size } = fs.statSync(videoPath);
-
-                  //res.setHeader("Content-Type", "video/mp4");
-                  //res.setHeader("Content-Length", size);
-                  rs.pipe(res);
-           */
+                 //res.redirect("/video_processing");
 
 
                }
@@ -1002,141 +936,6 @@ console.log("app.post(/jsondataTimeCuttingParameters=================");
            })
 
 });
-
-/*
-app.post("/selectVideoFile", function(req, res){
-  console.log("app.post(/selectVideoFile=================");
-
-  const user =  new User({
-    username: req.user.username,
-    password: req.user.password
-  });
-
-  console.log(user)
-
-  User.findById(req.user.id, function(err, foundUser){
-
-    if(err){
-      console.log(err);
-    } else {
-      if(foundUser){
-
-        //console.log(res)
-        //const jsonContent = JSON.parse(req);
-        //res.json({ msg:
-        //           `Selected video file for processing is ${req.body.selectedVideoFileForProcessing}`});
-
-        const data = JSON.stringify(req.body);
-        //console.log("req.body = ", req.body);
-
-        var dirUser = __dirname + '\\UsersCollections\\' + req.user.username;
-        //console.log(dirUser)
-        var dirJsonFiles = dirUser  + "\\" + 'jsonFiles';
-        //console.log(dirJsonFiles)
-
-        outputFileNameJSON = dirJsonFiles + "\\selectedVideoFileForProcessing.json";
-        //console.log("outputFileNameJSON = ", outputFileNameJSON)
-
-        //let outputFileNameJSON = './myjsonfile.json';
-        fs.writeFileSync(outputFileNameJSON, data, (err) =>{
-        if (err) throw err;
-          console.log('Data written to file');
-        });
-        console.log("app.get(/selectVideoFile+++++++++++++++++++++++++++++++++++++++video");
-        res.redirect("/video_processing");
-
-       }
-     }
-   })
-
-})*/
-
-
-app.get("/selectVideoFileAnnotationParameters", function (req, res) {
-console.log("app.get(/selectVideoFileAnnotationParameters=================");
-
-          console.log("req.user = ", req.user)
-          //console.log("req.body = ", req.body)
-
-          if(req.isAuthenticated()){
-
-
-              var dirUser = __dirname + '\\UsersCollections\\' + req.user.username;
-              //console.log(dirUser)
-              var dirUploads =   dirUser  + "\\" + 'uploads';
-              //console.log(dirUploads)
-              var dirJsonFiles = dirUser  + "\\" + 'jsonFiles';
-              //console.log(dirJsonFiles)
-
-              let videoFileToShowJson = dirJsonFiles + "\\" + "selectedVideoFileForProcessing.json";
-
-              let rawdata = fs.readFileSync(videoFileToShowJson, (err, jsonString) => {
-              if (err) {
-                console.log("File read failed: - No json file", err);
-              return;
-                }
-            //console.log("File data:", jsonString);
-                });
-              let data = JSON.parse(rawdata);
-              //console.log("get video JSON data = ", data);
-
-              const videoFileName = data.inputVideoFile;
-
-              const videoPath = data.inputVideoFilePath;
-
-              var lengthObj = Object.keys(data).length;
-              console.log(lengthObj)
-              console.log(data)
-
-              if(lengthObj == 2 ){
-
-                let outputFileName =  videoFileName;
-                let outputFileLength = outputFileName.length;
-                //console.log("outputFileLength = ", outputFileLength)
-                let lengthName = outputFileLength - 4;
-
-                var dirOutputFiles = dirUser  + "\\" + 'outputFiles';
-                //console.log(dirOutputFiles)
-                var dirOutputFilesWorkingParameters = dirUser  + "\\" + 'outputFilesWorkingParameters';
-                //console.log(dirOutputFilesWorkingParameters)
-
-                var outputJSONFileNameTimeCuttedParameters = dirJsonFiles + "\\" + outputFileName.substr(0,lengthName) + "AnnotationParameters.json";
-
-                let objJSONFileNameTimeCuttedParameters = JSON.parse(fs.readFileSync(outputJSONFileNameTimeCuttedParameters));
-
-
-                var lengthJSONFileNameTimeCuttedParameters = Object.keys(objJSONFileNameTimeCuttedParameters).length;
-
-                console.log("lengthJSONFileNameTimeCuttedParameters = ", lengthJSONFileNameTimeCuttedParameters)
-
-                if(lengthJSONFileNameTimeCuttedParameters !=0) {
-
-                    outputFileNameTimeCuttingParameters = dirOutputFilesWorkingParameters + "\\" + outputFileName.substr(0,lengthName) + "ResizedAnnotated.mp4";
-                    //console.log("outputFileNameTimeCuttingParameters = ", outputFileNameTimeCuttingParameters)
-
-                    const videoSize = fs.statSync(outputFileNameTimeCuttingParameters).size;
-
-                    const rs = fs.createReadStream(outputFileNameTimeCuttingParameters);
-
-                    // get size of the video file
-                    const { size } = fs.statSync(outputFileNameTimeCuttingParameters);
-                    //res.setHeader("Content-Type", "video/mp4");
-                    //res.setHeader("Content-Length", size);
-
-                   rs.pipe(res);
-                 }
-              }
-
-          }
-          else {
-              res.redirect("/login");
-          }
-
-
-
-
-})
-
 
 
 app.post("/jsondataAnnotationParameters", function (req, res) {
@@ -1249,6 +1048,8 @@ User.findById(req.user.id, function(err, foundUser){
                      console.log(data.toString());
             });
 
+            //res.redirect("/video_processing");
+
      }
    }
  })
@@ -1259,19 +1060,93 @@ User.findById(req.user.id, function(err, foundUser){
 
 
 
-/*
-app.get('/user',function(req, res){
-  console.log("/get user================================DEBUGGING");
-  connectEnsureLogin.ensureLoggedIn();
-    res.send({user: req.user});
-});
+app.get("/showVideoFileAnnotationParameters", function (req, res) {
+console.log("app.get(/showVideoFileAnnotationParameters=================");
 
-app.post('/user',function(req, res){
-  console.log("/post user================================DEBUGGING");
+          console.log("req.user = ", req.user)
+          //console.log("req.body = ", req.body)
 
-  console.log(req.user);
-});
-*/
+          if(req.isAuthenticated()){
+
+
+              var dirUser = __dirname + '\\UsersCollections\\' + req.user.username;
+              //console.log(dirUser)
+              var dirUploads =   dirUser  + "\\" + 'uploads';
+              //console.log(dirUploads)
+              var dirJsonFiles = dirUser  + "\\" + 'jsonFiles';
+              //console.log(dirJsonFiles)
+
+              let videoFileToShowJson = dirJsonFiles + "\\" + "selectedVideoFileForProcessing.json";
+
+              let rawdata = fs.readFileSync(videoFileToShowJson, (err, jsonString) => {
+              if (err) {
+                console.log("File read failed: - No json file", err);
+              return;
+                }
+            //console.log("File data:", jsonString);
+                });
+              let data = JSON.parse(rawdata);
+              //console.log("get video JSON data = ", data);
+
+              const videoFileName = data.inputVideoFile;
+
+              const videoPath = data.inputVideoFilePath;
+
+              var lengthObj = Object.keys(data).length;
+              console.log(lengthObj)
+              console.log(data)
+
+              if(lengthObj == 2 ){
+
+                let outputFileName =  videoFileName;
+                let outputFileLength = outputFileName.length;
+                //console.log("outputFileLength = ", outputFileLength)
+                let lengthName = outputFileLength - 4;
+
+                var dirOutputFiles = dirUser  + "\\" + 'outputFiles';
+                //console.log(dirOutputFiles)
+                var dirOutputFilesWorkingParameters = dirUser  + "\\" + 'outputFilesWorkingParameters';
+                //console.log(dirOutputFilesWorkingParameters)
+
+                var outputJSONFileNameTimeCuttedParameters = dirJsonFiles + "\\" + outputFileName.substr(0,lengthName) + "AnnotationParameters.json";
+
+                let objJSONFileNameTimeCuttedParameters = JSON.parse(fs.readFileSync(outputJSONFileNameTimeCuttedParameters));
+
+
+                var lengthJSONFileNameTimeCuttedParameters = Object.keys(objJSONFileNameTimeCuttedParameters).length;
+
+                console.log("lengthJSONFileNameTimeCuttedParameters = ", lengthJSONFileNameTimeCuttedParameters)
+
+                if(lengthJSONFileNameTimeCuttedParameters !=0) {
+
+                    outputFileNameTimeCuttingParameters = dirOutputFilesWorkingParameters + "\\" + outputFileName.substr(0,lengthName) + "ResizedAnnotated.mp4";
+                    //console.log("outputFileNameTimeCuttingParameters = ", outputFileNameTimeCuttingParameters)
+
+                    const videoSize = fs.statSync(outputFileNameTimeCuttingParameters).size;
+
+                    const rs = fs.createReadStream(outputFileNameTimeCuttingParameters);
+
+                    // get size of the video file
+                    const { size } = fs.statSync(outputFileNameTimeCuttingParameters);
+                    //res.setHeader("Content-Type", "video/mp4");
+                    //res.setHeader("Content-Length", size);
+
+                   rs.pipe(res);
+                 }
+              }
+
+          }
+          else {
+              res.redirect("/login");
+          }
+
+
+
+
+})
+
+
+
 
 
 app.post('/prepareConcatenateVideos', function (req, res) {
@@ -1301,8 +1176,8 @@ app.post('/prepareConcatenateVideos', function (req, res) {
 
 
 
-app.post('/jsonOrderedVideosFiles', function (req, res) {
-  console.log("app.post('jsonOrderedVideosFiles'=================");
+app.post('/jsonAddFileToOrderedVideosFilesList', function (req, res) {
+  console.log("app.post('jsonAddFileToOrderedVideosFilesList'=================");
     // req.files is array of `profile-files` files
     // req.body will contain the text fields, if there were any
 
@@ -1375,72 +1250,92 @@ app.post('/jsonOrderedVideosFiles', function (req, res) {
 
 
 
-app.post('/jsonRemoveFromOrderedVideosFiles', function (req, res) {
-  console.log("app.post('jsonRemoveFromOrderedVideosFiles'=================");
+app.post('/jsonRemoveFileFromOrderedVideosFilesList', function (req, res) {
+  console.log("app.post('jsonRemoveFileFromOrderedVideosFilesList'=================");
     // req.files is array of `profile-files` files
     // req.body will contain the text fields, if there were any
 
-    console.log("req.body=", req.body)
-    console.log("req.body.inputVideoFile = ", req.body.inputVideoFile)
-    console.log("req.body.inputVideoFilePath = ", req.body.inputVideoFilePath)
 
-    let newObj = {inputVideoFile: req.body.inputVideoFile,
-                inputVideoFilePath: req.body.inputVideoFilePath};
-
-    res.json({ msg:
-              `Input video file is ${req.body.inputVideoFile},
-               Path video file is ${req.body.inputVideoFilePath}`});
-
-
-
-    //const data = JSON.stringify(req.body);
-    //console.log("data = ", data);
-
-    //const data = JSON.stringify(dataJSON);
-    var dirUser = __dirname + '\\UsersCollections\\' + req.user.username;
-    console.log(dirUser)
-    var dirUploads =   dirUser  + "\\" + 'uploads';
-    console.log(dirUploads)
-    var dirJsonFiles = dirUser  + "\\" + 'jsonFiles';
-    console.log(dirJsonFiles)
-    let outputOrdoredFileNameJSON = dirJsonFiles + "//jsonVideoOrderedMultipleFiles.json";
-
-
-    let oldObj = JSON.parse(fs.readFileSync(outputOrdoredFileNameJSON));
-    console.log("length = ", oldObj.length)
-
-    console.log("newObj=", newObj)
-    console.log("oldObj=", oldObj)
-
-    for (let i=0; i< oldObj.length; i++){
-      if (oldObj[i].inputVideoFile == newObj.inputVideoFile) {
-       delete oldObj[i];
-       console.log("Result");
-     }
-    }
-    var res = oldObj.filter(elements => {
-     return elements !== null;
-    })
-
-    console.log("res= ", res)
-    //delete oldObj.newObj;
-
-
-    let updatedObj = JSON.stringify(res);
-
-    console.log("updatedObj=", updatedObj)
-    fs.writeFileSync(outputOrdoredFileNameJSON, updatedObj, (err) =>{
-       if (err) throw err;
-       console.log('Data written to file');
+    const user =  new User({
+      username: req.user.username,
+      password: req.user.password
     });
+
+    console.log(user)
+
+    User.findById(req.user.id, function(err, foundUser){
+
+      if(err){
+        console.log(err);
+      } else {
+         if(foundUser){
+
+              console.log("req.body=", req.body)
+              console.log("req.body.inputVideoFile = ", req.body.inputVideoFile)
+              console.log("req.body.inputVideoFilePath = ", req.body.inputVideoFilePath)
+
+              let newObj = {inputVideoFile: req.body.inputVideoFile,
+                          inputVideoFilePath: req.body.inputVideoFilePath};
+
+              res.json({ msg:
+                        `Input video file is ${req.body.inputVideoFile},
+                         Path video file is ${req.body.inputVideoFilePath}`});
+
+
+
+              //const data = JSON.stringify(req.body);
+              //console.log("data = ", data);
+
+              //const data = JSON.stringify(dataJSON);
+              var dirUser = __dirname + '\\UsersCollections\\' + req.user.username;
+              console.log(dirUser)
+              var dirUploads =   dirUser  + "\\" + 'uploads';
+              console.log(dirUploads)
+              var dirJsonFiles = dirUser  + "\\" + 'jsonFiles';
+              console.log(dirJsonFiles)
+              let outputOrdoredFileNameJSON = dirJsonFiles + "//jsonVideoOrderedMultipleFiles.json";
+
+
+              let oldObj = JSON.parse(fs.readFileSync(outputOrdoredFileNameJSON));
+              console.log("length = ", oldObj.length)
+
+              console.log("newObj=", newObj)
+              console.log("oldObj=", oldObj)
+
+              for (let i=0; i< oldObj.length; i++){
+                if (oldObj[i].inputVideoFile == newObj.inputVideoFile) {
+                 delete oldObj[i];
+                 console.log("Result");
+               }
+              }
+              var res = oldObj.filter(elements => {
+               return elements !== null;
+              })
+
+              console.log("res= ", res)
+              //delete oldObj.newObj;
+
+
+              let updatedObj = JSON.stringify(res);
+
+              console.log("updatedObj=", updatedObj)
+              fs.writeFileSync(outputOrdoredFileNameJSON, updatedObj, (err) =>{
+                 if (err) throw err;
+                 console.log('Data written to file');
+              });
+            }
+          }
+
+      })
+
 
 
 })
 
 
 
-app.get('/videoConcatenatedSrc', function (req, res) {
-  console.log("app.get(/videoConcatenatedSrc=================");
+app.get('/showVideoConcatenatedOutput', function (req, res) {
+  console.log("app.get(/showVideoConcatenatedOutput=================");
 
 
   console.log("req.user = ", req.user)
@@ -1470,6 +1365,8 @@ app.get('/videoConcatenatedSrc', function (req, res) {
 
             rs.pipe(res);
           }
+
+          console.log("app.get(/showVideoConcatenatedOutput=================");
        }
        else {
          //res.render("video_processing");
@@ -1661,7 +1558,13 @@ User.findById(req.user.id, function(err, foundUser){
 
            }
          }
+          console.log("====app.post(' Finish concatenateVideos'=================");
+          console.log("app.post(' Finish concatenateVideos'=================");
+          console.log("=====app.post(' Finish concatenateVideos'=================");
+         //res.redirect("/video_processing");
        })
+
+
 })
 
 

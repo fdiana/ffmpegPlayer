@@ -12,6 +12,12 @@
 </div>
 
 <body>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js">
+  </script>
+
+
 <!--
 <div id="videoal">
       <table>
@@ -53,11 +59,12 @@
  </form>
 
 
-<div id="id_msg">
-    <p id="msg"></p>
-</div>
+ <div id="id_msg">
+     <p id="msg"></p>
+ </div>
 
-  <form method="POST"  action="/workingParameters" enctype="multipart/form-data">
+
+  <form method="POST" action="/workingParameters" enctype="multipart/form-data">
     <select id="sel" onchange="show(this)">
         <option value="">-- Select --</option>
     </select>
@@ -68,23 +75,24 @@
           <td><label name="annotatedVideo">Annotated Video</label></td>
        </tr>
        <tr>
-        <!-- <div id = "mydivShowVideos" onchange = "showVideos(this)">-->
            <td>
            <video id="videoPlayer1" width="320" height="240" controls = "controls" style="display: ;"">
-               <source src="/selectVideoFileOriginal" type="video/mp4" />
+               <source src="/showVideoFileOriginal" type="video/mp4" />
            </video>
+           </td>
            <td>
+             <div id = "videoPlayer2VideoElement">
               <video id="videoPlayer2" width="320" height="240" controls  = "controls" style="display: ;"">
-                <source src="/selectVideoFileTimeCuttingParameters" type="video/mp4" />
+                <source src="/showVideoFileTimeCuttingParameters" type="video/mp4" />
              </video>
+             </div>
            </td>
            <td>
              <video id="videoPlayer3" width="320" height="240" controls  = "controls" style="display: ;"">
-               <source src="/selectVideoFileAnnotationParameters" type="video/mp4" />
+               <source src="/showVideoFileAnnotationParameters" type="video/mp4" />
             </video>
           </td>
-        <!--</div>-->
-       </tr>
+     </tr>
      <tr>
          <td> </td>
          <td>  <input type="int" id="cuttingStartTime" placeholder="Cutting: Start Time" /> </td>
@@ -97,8 +105,7 @@
        </tr>
        <tr>
          <td> </td>
-         <td> <button id="timeCutting" value="timeCuttingSend" onclick="writeTimeCuttingParameters(sel)"> Time Cutting Send </button> </td>
-
+         <td> <button type="submit" id="timeCutting" value="timeCuttingSend" onclick="writeTimeCuttingParameters(sel)"> Time Cutting Send </button> </td>
          <td>  <input type="text" id="firstAnnotatedLine" placeholder="First Annotated Line" /> </td>
        </tr>
        <tr>
@@ -114,13 +121,12 @@
        <tr>
          <td> </td>
          <td> </td>
-         <td> <button id="annotation" value="annotation" onclick="writeAnnotationParameters(sel)"> Annotation </button> </td>
+         <td> <button type="submit" id="annotation" value="annotation" onclick="writeAnnotationParameters(sel)"> Annotation </button> </td>
 
        </tr>
      </table>
       <!--<input type="button" id="dropDownBox" value="Upload"/>-->
     </form>
-
 
     <form method="POST" action="/prepareConcatenateVideos" enctype="multipart/form-data">
       <table style="border:1px solid none">
@@ -133,28 +139,44 @@
             </select></td>
           </tr>
           <tr>
-            <td>  <button onclick="sendVideoForConcatenation(sel2, selForConcatenation)">Choose Video for Concatenation  </button></td>
-            <td>  <button onclick="returnVideo(sel2, selForConcatenation)"> Deselect Video </button> </td>
+            <td>  <button onclick="selectVideoOrderForConcatenation(sel2, selForConcatenation)">Choose Video for Concatenation  </button></td>
+            <td>  <button onclick="unselectVideoOrderForConcatenation(sel2, selForConcatenation)"> Deselect Video </button> </td>
           </tr>
+          <tr>
+            <label>Concatenated videos</label>
+            <video id="videoPlayerConcatenatedVideos" title="Concatenated videos"  width="320" height="240" controls style="display:  ;"" >
+              <source src="/showVideoConcatenatedOutput" type="video/mp4" />
+            </video>
+              <button type="submit" id="concatenateOrderedVideos" value="Concatenate the videos" onClick="concatenateAndShowVideoOutput(selForConcatenation)" > Concatenate the Videos </button>
+            </tr>
       </table>
       </form>
 
-      <form method="POST"  action="/concatenateVideos" enctype="multipart/form-data">
+
+      <div id="div_msg2">
+        <p> The order of concatenated video files is: </p>
+        <label for="The order of concatenated video files is:"></label>
+          <p id="msg2"></p>
+      </div>
+
+    <!--<form method="POST" action="/concatenateVideos" enctype="multipart/form-data" onsubmit="disableButton(sel2)">-->
+<!--    <form method="POST" action="/concatenateVideos" enctype="multipart/form-data">
       <div>
         <label>Concatenated videos</label>
         <video id="videoPlayerConcatenatedVideos" title="Concatenated videos"  width="320" height="240" controls style="display:  ;"" >
-          <source src="/videoConcatenatedSrc" type="video/mp4" />
-        </video>
-          <!--<input type="submit" id="concatenateOrderedVideos" value="Concatenate the videos"/>-->
-          <input type="submit" id="concatenateOrderedVideos" value="Concatenate the videos"/>
-          <!--<button type="submit" id="multipleFilesSubmitted" value="Upload" onClick="callDropDownMenu()" ></button>-->
+          <source src="/showVideoConcatenatedOutput" type="video/mp4" />
+        </video>-->
 
+          <!--<input type="submit" id="concatenateOrderedVideos" value="Concatenate the videos"/>-->
+          <!--<input type="submit" id="concatenateOrderedVideos" value="Concatenate the videos" onchange="showOutputVideo(sel2)"/>-->
+      <!--    <button type="submit" id="concatenateOrderedVideos" value="Concatenate the videos" onClick="showOutputVideo(sel2)" > Concatenate the Videos </button>
       </div>
-    </form>
+    </form>-->
 
 
 
   <script>
+
           window.onload = populateSelect();
           let ele = document.getElementById('sel');
           function populateSelect() {
@@ -165,21 +187,23 @@
                   //url = __dirname + './jsonFiles/jsonVideoMultipleFiles.json';        // ADD THE URL OF THE FILE.
                   //url = "http://localhost:3000/workingParameters";
                   //url = "http://192.168.0.20:3000/workingParameters"
-                  url = "http://192.168.0.20:3000/workingParameters"
+                  url = "http://192.168.0.20:3000/workingParameters";
                   //url =  "./jsonFiles/jsonVideoMultipleFiles.json";
               xhr.onreadystatechange = function () {
                   if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
 
                       // PARSE JSON DATA.
                       let video = JSON.parse(xhr.responseText);
-                      //alert(video)
+                      alert(video)
+                      //let ele = document.getElementById('sel');
                       //let ele = document.getElementById('sel');
                       let ele2 = document.getElementById('sel2');
-                      let ele3 = document.getElementById('sel3');
+                      alert(video.length)
                       for (let i = 0; i < video.length; i++) {
                           // BIND DATA TO <select> ELEMENT.
                           ele.innerHTML = ele.innerHTML +
                             '<option value="' + video[i].index +'">' + video[i].inputVideoFile + '</option>';
+                            alert(ele.innerHTML)
                           ele2.innerHTML = ele2.innerHTML +
                             '<option value="' + video[i].index +'">' + video[i].inputVideoFile + '</option>';
                       }
@@ -205,65 +229,29 @@
                 xhr.onload = function () {
                     // do something to response
                     console.log(this.responseText);
+
                 };
 
                 xhr.send(ele.options[ele.selectedIndex].text);
-                alert("alert from show")
-                alert(ele.options[ele.selectedIndex].text);
 
-                localStorage.setItem("msg", msg.innerHTML);
-
-                localStorage.setItem("optionSelected",ele.options[ele.selectedIndex].text);
-
-                alert("alert after localStorage")
-                alert(localStorage.optionSelected);
-
-                //var msg = document.getElementById('msg');
-
-                //msg.innerHTML = 'Selected Video: <b>' + ele.options[ele.selectedIndex].text + '</b> </br>';
+                alert('Show original video');
                 document.getElementById("videoPlayer1").load();
-                document.getElementById("videoPlayer2").load();
-                document.getElementById("videoPlayer3").load();
-                //document.getElementById("videoPlayer2").load();
+                //document.getElementById("videoPlayer1").play();
 
           };
 
 
-          alert("alert")
-          alert(localStorage.getItem("optionSelected"));
-
-
-          if (typeof(Storage) !== "undefined") {
-            // Store
-            //localStorage.setItem("msg", "Smith");
-            // Retrieve
-            document.getElementById("msg").innerHTML = localStorage.getItem("msg");
-            var eleInt = document.getElementById("sel");
-            var textOpt = eleInt.options[eleInt.selectedIndex].text
-
-            textOpt = localStorage.getItem("optionSelected");
-            alert(textOpt);
-            alert(ele.options[ele.selectedIndex].text);
-
-            ele.options[ele.selectedIndex].text = localStorage.getItem("optionSelected");
-            alert(ele.options[ele.selectedIndex].text);
-
-
-          } else {
-            document.getElementById("msg").innerHTML = "Sorry, your browser does not support Web Storage...";
-          }
-
 
           function writeTimeCuttingParameters(ele){
 
-             //let ele = document.getElementById('sel');
+              //let ele = document.getElementById('sel');
               alert("writeTimeCuttingParameters")
-              var cuttingStartTimeVal = document.getElementById("cuttingStartTime").value;
-              var cuttingEndTimeVal = document.getElementById("cuttingEndTime").value;
 
-              localStorage.setItem("cuttingStartTimeLS", cuttingStartTimeVal);
-              localStorage.setItem("cuttingEndTimeLS", cuttingStartTimeVal);
+              //document.getElementById("timeCutting").setAttribute("disabled", true);
+              document.getElementById("timeCutting").disabled = true;
 
+              var cuttingStartTime = document.getElementById("cuttingStartTime").value;
+              var cuttingEndTime = document.getElementById("cuttingEndTime").value;
             //fetch("http://login:password@192.168.0.20:3000/jsondataTimeCuttingParameters", {
             fetch("/jsondataTimeCuttingParameters", {
                   method: "POST",
@@ -284,33 +272,24 @@
                   .catch(function (error) {
                     console.log(error);
                   });
+                  alert('Load cutting parameters video')
 
-                  //document.getElementById("videoPlayer2").load();
+                  document.getElementById("videoPlayer2").load();
+
+                  setTimeout(function() {
+                    console.log('hey');
+                    document.getElementById("timeCutting").disabled = false;
+                  }, 10000);
+                  //document.getElementById("timeCutting").removeAttribute("disabled");
+
 
           };
-
-          if (typeof(Storage) !== "undefined") {
-            // Store
-            //localStorage.setItem("msg", "Smith");
-            // Retrieve
-
-            document.getElementById("cuttingStartTime").innerHTML = localStorage.getItem("cuttingStartTimeLS");
-            document.getElementById("cuttingEndTime").innerHTML = localStorage.getItem("cuttingEndTimeLS");
-
-
-          } else {
-            document.getElementById("msg").innerHTML = "Sorry, your browser does not support Web Storage...";
-          }
-
-
-          //var eleInt = document.getElementById("sel");
-          //var textOpt = eleInt.options[eleInt.selectedIndex].text
-
-          //textOpt = localStorage.getItem("optionSelected");
 
             function writeAnnotationParameters(ele){
               //let ele = document.getElementById('sel');
               alert("writeAnnotationParameters")
+              document.getElementById("annotation").disabled = true;
+
               var startTimeAnnotation = document.getElementById("startTimeAnnotation").value;
               console.log("startTimeAnnotation = ", startTimeAnnotation);
               var endTimeAnnotation = document.getElementById("endTimeAnnotation").value;
@@ -345,26 +324,19 @@
                 .catch(function (error) {
                   console.log(error);
                 });
+              alert('Load annotation parameters video')
+              document.getElementById("videoPlayer3").load();
 
-                //window.location.reload();
+              setTimeout(function() {
+                console.log('hey');
+                document.getElementById("annotation").disabled = false;
+              }, 10000);
 
-               /*
-                var inputVideoFile = ele.options[ele.selectedIndex].text;
-                alert(inputVideoFile)
-                var inputVideoFileLength = inputVideoFile.length;
-                alert(inputVideoFileLength)
-                var lengthName = inputVideoFileLength - 4;
-                alert(lengthName)
-                //var outputVideoFile = "./outputFiles/8_GMajorScale_and_AttwoodAllegroResizedTimeCutted.mp4";
-                var outputVideoFile = "./outputFilesWorkingParameters/" + inputVideoFile.substr(0,lengthName) + "ResizedAnnotated.mp4";
-                alert(outputVideoFile)
-                var myVideo3 = document.getElementById('videoPlayer3');
-                myVideo3.src = outputVideoFile;
-                */
              }
 
 
-             function sendVideoForConcatenation(ele2, eleForConcatenation){
+         function selectVideoOrderForConcatenation(ele2, eleForConcatenation){
+           //alert(ele2.length)
            // BIND DATA TO <select> ELEMENT.
            //if ((ele2.value != "select2Video") || (eleForConcatenation.value != "selVideoForConcatenation")){
            if (ele2.value != "select2Video"){
@@ -372,13 +344,17 @@
                '<option value="' + ele2.options[ele2.selectedIndex].text +'">'
                  + ele2.options[ele2.selectedIndex].text + '</option>';
 
+            var msg2 = document.getElementById('msg2');
+            msg2.innerHTML = 'Selected Video: <b>' + ele2.options[ele2.selectedIndex].text + '</b> </br>';
+
+
              let inputVideoFile = ele2.options[ele2.selectedIndex].text
              let inputVideoFilePath = "uploads\\" +ele2.options[ele2.selectedIndex].text
 
              ele2.remove(ele2.selectedIndex);
 
 
-             fetch("/jsonOrderedVideosFiles", {
+             fetch("/jsonAddFileToOrderedVideosFilesList", {
                    method: "POST",
                    headers: {
                      "Content-Type": "application/json",
@@ -391,16 +367,17 @@
                      return response.json();
                    })
                    .then(function (data) {
-                     result.innerHTML = data.msg;
+                     result.innerHTML = data.msg2;
                    })
                    .catch(function (error) {
                      console.log(error);
                    });
+
            }
 
          }
 
-         function returnVideo(ele2, eleForConcatenation) {
+         function unselectVideoOrderForConcatenation(ele2, eleForConcatenation) {
 
              if (eleForConcatenation.value != "selVideoForConcatenation"){
                ele2.innerHTML = ele2.innerHTML +
@@ -410,10 +387,10 @@
                  let inputVideoFile = eleForConcatenation.options[eleForConcatenation.selectedIndex].text
                  let inputVideoFilePath = "uploads\\" +eleForConcatenation.options[eleForConcatenation.selectedIndex].text
 
-               eleForConcatenation.remove(eleForConcatenation.selectedIndex);
+                 eleForConcatenation.remove(eleForConcatenation.selectedIndex);
 
 
-             fetch("/jsonRemoveFromOrderedVideosFiles", {
+             fetch("/jsonRemoveFileFromOrderedVideosFilesList", {
                    method: "POST",
                    headers: {
                      "Content-Type": "application/json",
@@ -432,9 +409,84 @@
                      console.log(error);
                    });
            }
+
          }
 
 
+/*        function disableButton(ele2){
+          var concatenateOrderedVideos = document.getElementById('concatenateOrderedVideos');
+          concatenateOrderedVideos.disabled = true;
+          concatenateOrderedVideos.innerText = 'Posting...'*/
+
+      /*      setTimeout(function() {
+                console.log('hey');
+                document.getElementById("concatenateOrderedVideos").disabled = false;
+              }, 10000);
+*/
+
+          //alert('Load output video from disable button')
+          //document.getElementById("videoPlayerConcatenatedVideos").load();
+
+          //document.getElementById("concatenateOrderedVideos").disabled = false;
+
+        //} */
+
+
+         function concatenateAndShowVideoOutput(eleForConcatenation){
+
+           alert('Send for concatenation')
+
+           document.getElementById('concatenateOrderedVideos');
+           //var concatenateOrderedVideos = document.getElementById('concatenateOrderedVideos');
+           //concatenateOrderedVideos.disabled = true;
+          // concatenateOrderedVideos.innerText = 'Posting...'
+
+           // Simple POST request with a JSON body using fetch
+           var xhr = new XMLHttpRequest();
+           //xhr.open('POST', "http://login:password@192.168.0.20:3000/selectVideoFile", true);
+           xhr.open('POST', "/concatenateVideos", true);
+           xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+           xhr.onload = function () {
+               // do something to response
+               console.log(this.responseText);
+
+
+           };
+
+           xhr.send(eleForConcatenation.options[eleForConcatenation.selectedIndex].text);
+
+           alert('Load output video')
+
+
+           document.getElementById("videoPlayerConcatenatedVideos").load();
+
+           setTimeout(function() {
+             console.log('hey');
+             document.getElementById("concatenateOrderedVideos").disabled = false;
+           }, 10000);
+
+
+           //concatenateOrderedVideos.disabled = false;
+
+
+
+          /*
+          var messages = [];
+          if (ele2.value != "select2Video"){
+            for(var nI=0; nI<ele2.length; nI++){
+              var msg2 = document.getElementById('msg2');
+              messages[nI] = '<b>' + ele2.options[ele2.selectedIndex].text + '</b> </br>'
+            }
+            msg2.innerHTML = messages;
+            //alert('Load output video')
+        }
+        */
+
+
+           //var msg2 = document.getElementById('msg2');
+           //msg2.innerHTML = 'Selected Video: <b>' + ele2.options[ele2.selectedIndex].text + '</b> </br>';
+
+       }
 
       </script>
 
