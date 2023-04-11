@@ -1,4 +1,4 @@
-<%- include('partials/header') %>
+  <%- include('partials/header') %>
 
 <div class="jumbotron text-center">
   <div class="container">
@@ -194,11 +194,11 @@
 
                       // PARSE JSON DATA.
                       let video = JSON.parse(xhr.responseText);
-                      alert(video)
+                      //alert(video)
                       //let ele = document.getElementById('sel');
                       //let ele = document.getElementById('sel');
                       let ele2 = document.getElementById('sel2');
-                      alert(video.length)
+                      //alert(video.length)
                       for (let i = 0; i < video.length; i++) {
                           // BIND DATA TO <select> ELEMENT.
                           ele.innerHTML = ele.innerHTML +
@@ -234,7 +234,7 @@
 
                 xhr.send(ele.options[ele.selectedIndex].text);
 
-                alert('Show original video');
+                //alert('Show original video');
                 document.getElementById("videoPlayer1").load();
                 //document.getElementById("videoPlayer1").play();
 
@@ -245,7 +245,7 @@
           function writeTimeCuttingParameters(ele){
 
               //let ele = document.getElementById('sel');
-              alert("writeTimeCuttingParameters")
+              //alert("writeTimeCuttingParameters")
 
               //document.getElementById("timeCutting").setAttribute("disabled", true);
               document.getElementById("timeCutting").disabled = true;
@@ -272,7 +272,7 @@
                   .catch(function (error) {
                     console.log(error);
                   });
-                  alert('Load cutting parameters video')
+                  //alert('Load cutting parameters video')
 
                   document.getElementById("videoPlayer2").load();
 
@@ -287,7 +287,7 @@
 
             function writeAnnotationParameters(ele){
               //let ele = document.getElementById('sel');
-              alert("writeAnnotationParameters")
+              //alert("writeAnnotationParameters")
               document.getElementById("annotation").disabled = true;
 
               var startTimeAnnotation = document.getElementById("startTimeAnnotation").value;
@@ -324,7 +324,7 @@
                 .catch(function (error) {
                   console.log(error);
                 });
-              alert('Load annotation parameters video')
+              //alert('Load annotation parameters video')
               document.getElementById("videoPlayer3").load();
 
               setTimeout(function() {
@@ -435,8 +435,7 @@
          function concatenateAndShowVideoOutput(eleForConcatenation){
 
            alert('Send for concatenation')
-
-           document.getElementById('concatenateOrderedVideos');
+           document.getElementById('concatenateOrderedVideos').disabled = true;
            //var concatenateOrderedVideos = document.getElementById('concatenateOrderedVideos');
            //concatenateOrderedVideos.disabled = true;
           // concatenateOrderedVideos.innerText = 'Posting...'
@@ -463,7 +462,7 @@
            setTimeout(function() {
              console.log('hey');
              document.getElementById("concatenateOrderedVideos").disabled = false;
-           }, 10000);
+           }, 50000);
 
 
            //concatenateOrderedVideos.disabled = false;
