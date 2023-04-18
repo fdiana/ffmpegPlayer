@@ -75,6 +75,11 @@
           <td><label name="annotatedVideo">Annotated Video</label></td>
        </tr>
        <tr>
+          <td> <div id="id_OriginalVideo_msg"> <p id="msgOrig"></p> </div></td>
+          <td> <div id="id_CuttedVideo_msg"> <p id="msgCutted"></p> </div></td>
+          <td> <div id="id_AnnotatedVideo_msg"> <p id="msgAnnotated"></p> </div></td>
+       </tr>
+       <tr>
            <td>
            <video id="videoPlayer1" width="320" height="240" controls = "controls" style="display: ;"">
                <source src="/showVideoFileOriginal" type="video/mp4" />
@@ -82,7 +87,7 @@
            </td>
            <td>
              <div id = "videoPlayer2VideoElement">
-              <video id="videoPlayer2" width="320" height="240" controls  = "controls" style="display: ;"">
+              <video id="videoPlayer2" width="320" height="240" controls  = "controls" preload = "none" style="display: ;"">
                 <source src="/showVideoFileTimeCuttingParameters" type="video/mp4" />
              </video>
              </div>
@@ -153,11 +158,12 @@
       </form>
 
 
-      <div id="div_msg2">
+<!--  <div id="div_msg2">
         <p> The order of concatenated video files is: </p>
         <label for="The order of concatenated video files is:"></label>
           <p id="msg2"></p>
-      </div>
+      </div>-->
+
 
     <!--<form method="POST" action="/concatenateVideos" enctype="multipart/form-data" onsubmit="disableButton(sel2)">-->
 <!--    <form method="POST" action="/concatenateVideos" enctype="multipart/form-data">
@@ -203,7 +209,7 @@
                           // BIND DATA TO <select> ELEMENT.
                           ele.innerHTML = ele.innerHTML +
                             '<option value="' + video[i].index +'">' + video[i].inputVideoFile + '</option>';
-                            alert(ele.innerHTML)
+                            //alert(ele.innerHTML)
                           ele2.innerHTML = ele2.innerHTML +
                             '<option value="' + video[i].index +'">' + video[i].inputVideoFile + '</option>';
                       }
@@ -214,29 +220,42 @@
               xhr.send();
           }
 
-
           function show(ele) {
               // GET THE SELECTED VALUE FROM <select> ELEMENT AND SHOW IT.
 
-              //alert(ele.innerHTML)
+              //alert(ele.options[ele.selectedIndex].text)
+              if(ele.options[ele.selectedIndex].text === "-- Select --"){
+                   alert("Choose a video to process!")
+                   alert(ele.options[ele.selectedIndex].text)
+              }
               var msg = document.getElementById('msg');
               msg.innerHTML = 'Selected Video: <b>' + ele.options[ele.selectedIndex].text + '</b> </br>';
 
+
+              if(ele.options[ele.selectedIndex].text !== "-- Select --"){
+                   //alert("Choose a different video to process!")
+                   alert(ele.options[ele.selectedIndex].text)
+
                 var xhr = new XMLHttpRequest();
-                //xhr.open('POST', "http://login:password@192.168.0.20:3000/selectVideoFile", true);
                 xhr.open('POST', "/jsonSelectVideoFile", true);
                 xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                //xhr.onchange = function () {
                 xhr.onload = function () {
                     // do something to response
+                    alert(ele.options[ele.selectedIndex].text)
                     console.log(this.responseText);
 
                 };
 
                 xhr.send(ele.options[ele.selectedIndex].text);
+                var msgOrig = document.getElementById('msgOrig');
+                msgOrig.innerHTML = 'Selected Video: <b>' + ele.options[ele.selectedIndex].text + '</b> </br>';
 
                 //alert('Show original video');
                 document.getElementById("videoPlayer1").load();
+
                 //document.getElementById("videoPlayer1").play();
+              }
 
           };
 
@@ -248,6 +267,13 @@
               //alert("writeTimeCuttingParameters")
 
               //document.getElementById("timeCutting").setAttribute("disabled", true);
+              if(ele.options[ele.selectedIndex].text === "-- Select --"){
+                   alert("Choose a video to process!")
+                   alert(ele.options[ele.selectedIndex].text)
+              }
+
+
+              if(ele.options[ele.selectedIndex].text !== "-- Select --"){
               document.getElementById("timeCutting").disabled = true;
 
               var cuttingStartTime = document.getElementById("cuttingStartTime").value;
@@ -273,7 +299,8 @@
                     console.log(error);
                   });
                   //alert('Load cutting parameters video')
-
+                  var msgCutted = document.getElementById('msgCutted');
+                  msgCutted.innerHTML = 'Selected Video: <b>' + ele.options[ele.selectedIndex].text + '</b> </br>';
                   document.getElementById("videoPlayer2").load();
 
                   setTimeout(function() {
@@ -281,13 +308,19 @@
                     document.getElementById("timeCutting").disabled = false;
                   }, 10000);
                   //document.getElementById("timeCutting").removeAttribute("disabled");
-
+             }
 
           };
 
-            function writeAnnotationParameters(ele){
+          function writeAnnotationParameters(ele){
               //let ele = document.getElementById('sel');
               //alert("writeAnnotationParameters")
+              if(ele.options[ele.selectedIndex].text === "-- Select --"){
+                   alert("Choose a video to process!")
+                   alert(ele.options[ele.selectedIndex].text)
+              }
+
+            if(ele.options[ele.selectedIndex].text !== "-- Select --"){
               document.getElementById("annotation").disabled = true;
 
               var startTimeAnnotation = document.getElementById("startTimeAnnotation").value;
@@ -325,6 +358,9 @@
                   console.log(error);
                 });
               //alert('Load annotation parameters video')
+
+              var msgAnnotated = document.getElementById('msgAnnotated');
+              msgAnnotated.innerHTML = 'Selected Video: <b>' + ele.options[ele.selectedIndex].text + '</b> </br>';
               document.getElementById("videoPlayer3").load();
 
               setTimeout(function() {
@@ -332,7 +368,9 @@
                 document.getElementById("annotation").disabled = false;
               }, 10000);
 
-             }
+            }
+
+          }
 
 
          function selectVideoOrderForConcatenation(ele2, eleForConcatenation){
@@ -344,8 +382,8 @@
                '<option value="' + ele2.options[ele2.selectedIndex].text +'">'
                  + ele2.options[ele2.selectedIndex].text + '</option>';
 
-            var msg2 = document.getElementById('msg2');
-            msg2.innerHTML = 'Selected Video: <b>' + ele2.options[ele2.selectedIndex].text + '</b> </br>';
+            //var msg2 = document.getElementById('msg2');
+            //msg2.innerHTML = 'Selected Video: <b>' + ele2.options[ele2.selectedIndex].text + '</b> </br>';
 
 
              let inputVideoFile = ele2.options[ele2.selectedIndex].text

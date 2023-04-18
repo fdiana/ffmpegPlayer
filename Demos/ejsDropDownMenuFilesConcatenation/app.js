@@ -675,6 +675,73 @@ app.get('/showVideoFileOriginal', function (req, res) {
      }
 })
 
+/*
+app.post('/jsonSelectVideoFile', function (req, res) {
+  console.log("app.post(/jsonSelectVideoFile=================");
+
+  //console.log("req = ", req.body)
+  //console.log("indexVideoToShow = ", indexVideoToShow)
+  //console.log("arrayOfVideoFileNames = ", arrayOfVideoFileNames);
+
+
+  User.findById(req.user.id, function(err, foundUser){
+    if (err) {
+      console.log(err);
+    } else {
+        if(foundUser){
+
+          const newuser= {
+                  file_name:req.body,
+              }
+          //try{
+                //console.log(newuser)
+                let selectIndex  = "-- Select --";
+                console.log(typeof selectIndex);
+                console.log(selectIndex);
+                let videoToShow = req.body.inputVideoFile;
+                //if(videoToShow != "-- Select --") {
+                  console.log(typeof videoToShow);
+                  var dirUser = __dirname + '\\UsersCollections\\' + req.user.username;
+                  console.log(dirUser)
+                  var dirUploads =   dirUser  + "\\" + 'uploads';
+                  console.log(dirUploads)
+                  var dirJsonFiles = dirUser  + "\\" + 'jsonFiles';
+                  console.log(dirJsonFiles)
+
+                  let outputSelectedVideoFilePath = dirUploads + "\\" + videoToShow;
+
+                  let outputFileNameJSON = dirJsonFiles + "\\" + "selectedVideoFileForProcessing.json";
+                  console.log("outputFileNameJSON = ", outputFileNameJSON)
+
+
+
+                  console.log("videoToShow = ", videoToShow)
+                  let dataJSON = {inputVideoFile: req.body.inputVideoFile,
+                                  inputVideoFilePath:outputSelectedVideoFilePath}
+                  console.log(dataJSON)
+                  const data = JSON.stringify(dataJSON);
+
+
+
+                  fs.writeFileSync(outputFileNameJSON, data, (err) =>{
+                    if (err) throw err;
+                      console.log('Data written to file');
+                  });
+
+              //}
+
+              //  res.redirect("/video_processing");
+              //}
+              //catch(err) {
+              //  console.error("Error - /profile-upload-multiple!");
+               //}
+             }
+            }
+       });
+
+})*/
+
+
 
 app.post('/jsonSelectVideoFile', function (req, res) {
   console.log("app.post(/jsonSelectVideoFile=================");
@@ -695,39 +762,46 @@ app.post('/jsonSelectVideoFile', function (req, res) {
               }
           //try{
                 //console.log(newuser)
-
+                let selectIndex  = "-- Select --";
+                console.log(typeof selectIndex);
+                console.log(selectIndex);
                 let videoToShow = newuser.file_name;
                 console.log(typeof videoToShow);
                 const keys = Object.keys(videoToShow);
                 console.log(keys[0]);
-                videoToShow = keys[0];
+                videoToShowK = keys[0];
+                console.log("videoToShowK = ",videoToShowK);
+                //if(videoToShowK != "-- Select --") {
+                  console.log(typeof videoToShowK);
+                  var dirUser = __dirname + '\\UsersCollections\\' + req.user.username;
+                  //console.log(dirUser)
+                  var dirUploads =   dirUser  + "\\" + 'uploads';
+                  //console.log(dirUploads)
+                  var dirJsonFiles = dirUser  + "\\" + 'jsonFiles';
+                  //console.log(dirJsonFiles)
 
-                var dirUser = __dirname + '\\UsersCollections\\' + req.user.username;
-                //console.log(dirUser)
-                var dirUploads =   dirUser  + "\\" + 'uploads';
-                //console.log(dirUploads)
-                var dirJsonFiles = dirUser  + "\\" + 'jsonFiles';
-                //console.log(dirJsonFiles)
+                  let outputSelectedVideoFilePath = dirUploads + "\\" + videoToShowK;
 
-                let outputSelectedVideoFilePath = dirUploads + "\\" + videoToShow;
-
-                let outputFileNameJSON = dirJsonFiles + "\\" + "selectedVideoFileForProcessing.json";
-                //console.log("outputFileNameJSON = ", outputFileNameJSON)
-
-
-
-                //console.log("videoToShow = ", videoToShow)
-                let dataJSON = {inputVideoFile: videoToShow,
-                                inputVideoFilePath:outputSelectedVideoFilePath}
-                console.log(dataJSON)
-                const data = JSON.stringify(dataJSON);
+                  let outputFileNameJSON = dirJsonFiles + "\\" + "selectedVideoFileForProcessing.json";
+                  //console.log("outputFileNameJSON = ", outputFileNameJSON)
 
 
 
-                fs.writeFileSync(outputFileNameJSON, data, (err) =>{
-                  if (err) throw err;
-                    console.log('Data written to file');
-                });
+                  console.log("videoToShowK = ", videoToShowK)
+                  let dataJSON = {inputVideoFile: videoToShowK,
+                                  inputVideoFilePath:outputSelectedVideoFilePath}
+                  console.log(dataJSON)
+                  const data = JSON.stringify(dataJSON);
+
+
+
+                  fs.writeFileSync(outputFileNameJSON, data, (err) =>{
+                    if (err) throw err;
+                      console.log('Data written to file');
+                  });
+
+              //}
+
               //  res.redirect("/video_processing");
               //}
               //catch(err) {
