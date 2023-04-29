@@ -452,7 +452,7 @@ app.get('/profile-upload-multiple', function(req, res){
 
 
 
-app.post('/profile-upload-multiple', upload.array('profile-files', 12), function (req, res, next) {
+app.post('/profile-upload-multiple', upload.array('profile-files', 30), function (req, res, next) {
   console.log("app.post('/profile-upload-multiple'=================");
     // req.files is array of `profile-files` files
     // req.body will contain the text fields, if there were any
@@ -479,14 +479,28 @@ app.post('/profile-upload-multiple', upload.array('profile-files', 12), function
            var response = '<a href="/">Home</a><br>'
            response += "Files uploaded successfully.<br>"
            numberOfVideoFilesUpdated = req.files.length;
-           let dataJSON = []
+           let dataJSON = [];
            let outputTimeCuttingParametersFileNameJSON = [];
            let outputAnnotationParametersFileNameJSON = [];
            let outputFileName = [];
            let outputFileLength = [];
            let lengthName = [];
 
-      try{
+           let exeCommandStartingTime = [];
+           let exeCommandDuration = [];
+
+           let startTime = [];
+           let duration = [];
+           var dataParametersCuttingParams = [];
+           var dataParametersAnnotationParams = [];
+
+           function durationToMinsAndSecs(duration) {
+                    var min = parseInt(duration / 60, 10);
+                    var sec = parseInt(duration % 60);
+                    return { min, sec };
+                  }
+
+      //try{
             var dirUser = __dirname + '\\UsersCollections\\' + req.user.username;
             console.log(dirUser)
             var dirUploads =   dirUser  + "\\" + 'uploads';
@@ -507,15 +521,56 @@ app.post('/profile-upload-multiple', upload.array('profile-files', 12), function
               outputTimeCuttingParametersFileNameJSON[i] = dirJsonFiles + '/' + outputFileName[i].substr(0,lengthName[i]) + "TimeCutParameters.json";
               outputAnnotationParametersFileNameJSON[i] = dirJsonFiles + '/' + outputFileName[i].substr(0,lengthName[i]) + "AnnotationParameters.json";
 
-              var dataParametersJSON = [];
-              const dataParameters = JSON.stringify(dataParametersJSON);
+
+              //exeCommandStartingTime[i] = ffProbeExePath + " -i " + req.files[i].path + " -v error -sexagesimal -show_entries stream=start_time -of default=noprint_wrappers=1:nokey=1"
+
+              //exeCommandStartingTime[i] = ffProbeExePath + " -i " + req.files[i].path + " -v quiet -v error -sexagesimal -show_entries format=start_time -of default=noprint_wrappers=1:nokey=1"
+              //exeCommandDuration[i] = ffProbeExePath + " -i " + req.files[i].path + " -v quiet -v error -sexagesimal -show_entries format=duration -of default=noprint_wrappers=1:nokey=1"
+
+              exeCommandStartingTime[i] = ffProbeExePath + " -i " + req.files[i].path + " -v quiet -v error -sexagesimal -show_entries format=start_time -hide_banner -of default=noprint_wrappers=1:nokey=1"
+              exeCommandDuration[i] = ffProbeExePath + " -i " + req.files[i].path + " -v quiet -v error -sexagesimal -show_entries format=duration -hide_banner -of default=noprint_wrappers=1:nokey=1"
+
+              //console.log(exeCommandDuration[i]);
+
+              /*childProcess.exec(exeCommandDuration[i], function(err, data) {
+                                  console.log(err);
+                                  console.log('data.toString = ',  data.toString());
+                                });*/
+
+              startTime[i] = childProcess.execSync(exeCommandStartingTime[i]).toString().replace(/(\r\n|\n|\r|\\n)/gm, '');
+              duration[i] = childProcess.execSync(exeCommandDuration[i]).toString().replace(/(\r\n|\n|\r|\\n)/gm, '');
+
+
+              /*duration[i] = data.toString();
+              console.log(duration[i])
+
+              //durationToMinsAndSecs(duration[i])*/
+
+              console.log("startTime = ", startTime[i]);
+              console.log("duration = ", duration[i]);
+
+
+              dataParametersCuttingParams[i] = JSON.stringify({inputVideoFile: req.files[i].originalname,
+                                              cuttingStartTime: startTime[i],
+                                              cuttingEndTime: duration[i]});
+
+              dataParametersAnnotationParams[i] = JSON.stringify({inputVideoFile: req.files[i].originalname,
+                                              startTimeAnnotation: startTime[i],
+                                              endTimeAnnotation: duration[i],
+                                              firstAnnotatedLine: ' ',
+                                              secondAnnotatedLine: ' ',
+                                              thirdAnnotatedLine: ' '});
+              console.log(dataParametersCuttingParams[i])
+              console.log(dataParametersAnnotationParams[i])
+
+              //dataParameters[i] = JSON.stringify(dataParametersJSON[i]);
                //let outputFileNameJSON = './myjsonfile.json';
-               fs.writeFileSync(outputTimeCuttingParametersFileNameJSON[i], dataParameters, (err) =>{
+               fs.writeFileSync(outputTimeCuttingParametersFileNameJSON[i], dataParametersCuttingParams[i], (err) =>{
                  if (err) throw err;
                 console.log('Data written to file');
                });
 
-               fs.writeFileSync(outputAnnotationParametersFileNameJSON[i], dataParameters, (err) =>{
+               fs.writeFileSync(outputAnnotationParametersFileNameJSON[i], dataParametersAnnotationParams[i], (err) =>{
                  if (err) throw err;
                 console.log('Data written to file');
                });
@@ -544,10 +599,10 @@ app.post('/profile-upload-multiple', upload.array('profile-files', 12), function
 
            res.redirect("/video_processing");
 
-         }
-            catch(err) {
-                  console.error("Error - /profile-upload-multiple!");
-           }
+         //}
+        //    catch(err) {
+          //        console.error("Error - /profile-upload-multiple!");
+          // }
 
 
         }
@@ -1048,7 +1103,7 @@ User.findById(req.user.id, function(err, foundUser){
             console.log("req.body.endTimeAnnotation =", req.body.endTimeAnnotation);
             let firstAnnotatedLine = req.body.firstAnnotatedLine;
             console.log("req.body.firstAnnotatedLine =", req.body.firstAnnotatedLine);
-            let secondAnnotatedLine = req.body.firstAnnotatedLine;
+            let secondAnnotatedLine = req.body.secondAnnotatedLine;
             console.log("req.body.secondAnnotatedLine =", req.body.secondAnnotatedLine);
             let thirdAnnotatedLine = req.body.thirdAnnotatedLine;
             console.log("req.body.thirdAnnotatedLine =", req.body.thirdAnnotatedLine);
@@ -1109,9 +1164,9 @@ User.findById(req.user.id, function(err, foundUser){
 
 
              let outputNameFileResizedAnnotated = dirOutputFilesWorkingParameters + "\\"  + outputFileName.substr(0,lengthName) + "ResizedAnnotated.mp4";
-             let drawTextFirstLine = "drawtext=text='" + firstAnnotatedLine + ", ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=540:enable='gte(t,17)',"
-             let drawTextSecondLine ="drawtext=text='" + secondAnnotatedLine + ", ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=570:enable='gte(t,17)',"
-             let drawTextThirdLine = "drawtext=text='" + thirdAnnotatedLine + ", ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=600:enable='gte(t,17)'"
+             let drawTextFirstLine = "drawtext=text='" + firstAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=540:enable='gte(t,17)',"
+             let drawTextSecondLine ="drawtext=text='" + secondAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=570:enable='gte(t,17)',"
+             let drawTextThirdLine = "drawtext=text='" + thirdAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=600:enable='gte(t,17)'"
              //console.log(outputNameFileResizedAnnotated);
              //let exeCommandResizeAnnotatedFile = ffmpegExePath + " -y -i " + ".\\" + req.files[i].path + " -c:a copy -s 352x640 " + outputNameFileResized;
              let exeCommandResizeAnnotatedFile = ffmpegExePath + " -y -i " + outputNameFileResizedPath + " -vf " +' "'+ drawTextFirstLine + drawTextSecondLine +
@@ -1542,16 +1597,16 @@ User.findById(req.user.id, function(err, foundUser){
             let objAnnotation = JSON.parse(fs.readFileSync(outputFileNameJSON));
             let firstAnnotatedLine = objAnnotation.firstAnnotatedLine;
             console.log("firstAnnotatedLine =", firstAnnotatedLine);
-            let secondAnnotatedLine = objAnnotation.firstAnnotatedLine;
+            let secondAnnotatedLine = objAnnotation.secondAnnotatedLine;
             console.log("secondAnnotatedLine =",secondAnnotatedLine);
             let thirdAnnotatedLine = objAnnotation.thirdAnnotatedLine;
             console.log("thirdAnnotatedLine =", thirdAnnotatedLine);
 
 
             let outputNameFileResizedAnnotated = dirOutputFiles + "\\"  + outputFileName.substr(0,lengthName) + "ResizedAnnotated.mp4";
-            let drawTextFirstLine = "drawtext=text='" + firstAnnotatedLine + ", ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=540:enable='gte(t,17)',"
-            let drawTextSecondLine ="drawtext=text='" + secondAnnotatedLine + ", ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=570:enable='gte(t,17)',"
-            let drawTextThirdLine = "drawtext=text='" + thirdAnnotatedLine + ", ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=600:enable='gte(t,17)'"
+            let drawTextFirstLine = "drawtext=text='" + firstAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=540:enable='gte(t,17)',"
+            let drawTextSecondLine ="drawtext=text='" + secondAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=570:enable='gte(t,17)',"
+            let drawTextThirdLine = "drawtext=text='" + thirdAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=600:enable='gte(t,17)'"
             console.log(outputNameFileResizedAnnotated);
             //let exeCommandResizeAnnotatedFile = ffmpegExePath + " -y -i " + ".\\" + req.files[i].path + " -c:a copy -s 352x640 " + outputNameFileResized;
             let exeCommandResizeAnnotatedFile = ffmpegExePath + " -y -i " + outputNameFileResizedPath + " -vf " +' "'+ drawTextFirstLine + drawTextSecondLine +
