@@ -387,7 +387,7 @@
 
 
              let inputVideoFile = ele2.options[ele2.selectedIndex].text
-             let inputVideoFilePath = "uploads\\" +ele2.options[ele2.selectedIndex].text
+             //let inputVideoFilePath = "uploads\\" +ele2.options[ele2.selectedIndex].text
 
              ele2.remove(ele2.selectedIndex);
 
@@ -397,8 +397,7 @@
                    headers: {
                      "Content-Type": "application/json",
                    },
-                   body: JSON.stringify({inputVideoFile: inputVideoFile,
-                                         inputVideoFilePath: inputVideoFilePath
+                   body: JSON.stringify({inputVideoFile: inputVideoFile
                                        }),
                    })
                    .then(function (response) {
@@ -423,18 +422,14 @@
                  + eleForConcatenation.options[eleForConcatenation.selectedIndex].text + '</option>';
 
                  let inputVideoFile = eleForConcatenation.options[eleForConcatenation.selectedIndex].text
-                 let inputVideoFilePath = "uploads\\" +eleForConcatenation.options[eleForConcatenation.selectedIndex].text
-
-                 eleForConcatenation.remove(eleForConcatenation.selectedIndex);
-
+                 //let inputVideoFilePath = "uploads\\" +eleForConcatenation.options[eleForConcatenation.selectedIndex].text
 
              fetch("/jsonRemoveFileFromOrderedVideosFilesList", {
                    method: "POST",
                    headers: {
                      "Content-Type": "application/json",
                    },
-                   body: JSON.stringify({inputVideoFile: inputVideoFile,
-                                         inputVideoFilePath: inputVideoFilePath
+                   body: JSON.stringify({inputVideoFile: inputVideoFile
                                        }),
                    })
                    .then(function (response) {
@@ -446,6 +441,8 @@
                    .catch(function (error) {
                      console.log(error);
                    });
+
+                   eleForConcatenation.remove(eleForConcatenation.selectedIndex);
            }
 
          }

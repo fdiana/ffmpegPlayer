@@ -527,8 +527,8 @@ app.post('/profile-upload-multiple', upload.array('profile-files', 30), function
               //exeCommandStartingTime[i] = ffProbeExePath + " -i " + req.files[i].path + " -v quiet -v error -sexagesimal -show_entries format=start_time -of default=noprint_wrappers=1:nokey=1"
               //exeCommandDuration[i] = ffProbeExePath + " -i " + req.files[i].path + " -v quiet -v error -sexagesimal -show_entries format=duration -of default=noprint_wrappers=1:nokey=1"
 
-              exeCommandStartingTime[i] = ffProbeExePath + " -i " + req.files[i].path + " -v quiet -v error -sexagesimal -show_entries format=start_time -hide_banner -of default=noprint_wrappers=1:nokey=1"
-              exeCommandDuration[i] = ffProbeExePath + " -i " + req.files[i].path + " -v quiet -v error -sexagesimal -show_entries format=duration -hide_banner -of default=noprint_wrappers=1:nokey=1"
+              exeCommandStartingTime[i] = ffProbeExePath + " -i " + req.files[i].path + " -v quiet -v error -show_entries format=start_time -hide_banner -of default=noprint_wrappers=1:nokey=1"
+              exeCommandDuration[i] = ffProbeExePath + " -i " + req.files[i].path + " -v quiet -v error -show_entries format=duration -hide_banner -of default=noprint_wrappers=1:nokey=1"
 
               //console.log(exeCommandDuration[i]);
 
@@ -1099,7 +1099,9 @@ User.findById(req.user.id, function(err, foundUser){
             console.log("req.body =", req.body);
 
             console.log("req.body.inputVideoFile =", req.body.inputVideoFile);
+            let startTimeAnnotation = req.body.startTimeAnnotation;
             console.log("req.body.startTimeAnnotation =", req.body.startTimeAnnotation);
+            let endTimeAnnotation = req.body.endTimeAnnotation;
             console.log("req.body.endTimeAnnotation =", req.body.endTimeAnnotation);
             let firstAnnotatedLine = req.body.firstAnnotatedLine;
             console.log("req.body.firstAnnotatedLine =", req.body.firstAnnotatedLine);
@@ -1164,9 +1166,12 @@ User.findById(req.user.id, function(err, foundUser){
 
 
              let outputNameFileResizedAnnotated = dirOutputFilesWorkingParameters + "\\"  + outputFileName.substr(0,lengthName) + "ResizedAnnotated.mp4";
-             let drawTextFirstLine = "drawtext=text='" + firstAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=540:enable='gte(t,17)',"
-             let drawTextSecondLine ="drawtext=text='" + secondAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=570:enable='gte(t,17)',"
-             let drawTextThirdLine = "drawtext=text='" + thirdAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=600:enable='gte(t,17)'"
+             let drawTextFirstLine = "drawtext=text='" + firstAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=540:enable='between(t,"+ startTimeAnnotation + "," + endTimeAnnotation + ")',"
+             //console.log("drawTextFirstLine = ", drawTextFirstLine)
+             let drawTextSecondLine ="drawtext=text='" + secondAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=570:enable='between(t,"+ startTimeAnnotation + "," + endTimeAnnotation + ")',"
+             //console.log("drawTextSecondLine = ", drawTextSecondLine)
+             let drawTextThirdLine = "drawtext=text='" + thirdAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=600:enable='between(t,"+ startTimeAnnotation + "," + endTimeAnnotation + ")'"
+             //console.log("drawTextThirdLine = ", drawTextThirdLine)
              //console.log(outputNameFileResizedAnnotated);
              //let exeCommandResizeAnnotatedFile = ffmpegExePath + " -y -i " + ".\\" + req.files[i].path + " -c:a copy -s 352x640 " + outputNameFileResized;
              let exeCommandResizeAnnotatedFile = ffmpegExePath + " -y -i " + outputNameFileResizedPath + " -vf " +' "'+ drawTextFirstLine + drawTextSecondLine +
@@ -1178,6 +1183,8 @@ User.findById(req.user.id, function(err, foundUser){
             });
 
             //res.redirect("/video_processing");
+
+            console.log("Finished ---- app.post(/jsondataAnnotationParameters=================");
 
      }
    }
@@ -1306,7 +1313,7 @@ app.post('/prepareConcatenateVideos', function (req, res) {
 
 
 app.post('/jsonAddFileToOrderedVideosFilesList', function (req, res) {
-  console.log("app.post('jsonAddFileToOrderedVideosFilesList'=================");
+  console.log("++++++++++++++++app.post('jsonAddFileToOrderedVideosFilesList'=================");
     // req.files is array of `profile-files` files
     // req.body will contain the text fields, if there were any
 
@@ -1325,14 +1332,7 @@ app.post('/jsonAddFileToOrderedVideosFilesList', function (req, res) {
          if(foundUser){
            console.log("req.body=", req.body)
            console.log("req.body.inputVideoFile = ", req.body.inputVideoFile)
-           console.log("req.body.inputVideoFilePath = ", req.body.inputVideoFilePath)
-
-           let newObj = {inputVideoFile: req.body.inputVideoFile,
-                       inputVideoFilePath: req.body.inputVideoFilePath};
-
-           res.json({ msg:
-                     `Input video file is ${req.body.inputVideoFile},
-                      Path video file is ${req.body.inputVideoFilePath}`});
+           //console.log("req.body.inputVideoFilePath = ", req.body.inputVideoFilePath)
 
            //const data = JSON.stringify(req.body);
            //console.log("data = ", data);
@@ -1346,8 +1346,11 @@ app.post('/jsonAddFileToOrderedVideosFilesList', function (req, res) {
            var dirJsonFiles = dirUser  + "\\" + 'jsonFiles';
            console.log(dirJsonFiles)
 
+           let newInputVideoFilePath =  dirUploads + "\\" + req.body.inputVideoFile;
            let outputOrdoredFileNameJSON = dirJsonFiles + "//jsonVideoOrderedMultipleFiles.json";
 
+           let newObj = {inputVideoFile: req.body.inputVideoFile,
+                         inputVideoFilePath: newInputVideoFilePath};
 
            let oldObj = JSON.parse(fs.readFileSync(outputOrdoredFileNameJSON));
 
@@ -1380,7 +1383,7 @@ app.post('/jsonAddFileToOrderedVideosFilesList', function (req, res) {
 
 
 app.post('/jsonRemoveFileFromOrderedVideosFilesList', function (req, res) {
-  console.log("app.post('jsonRemoveFileFromOrderedVideosFilesList'=================");
+  console.log("============app.post('jsonRemoveFileFromOrderedVideosFilesList'=================");
     // req.files is array of `profile-files` files
     // req.body will contain the text fields, if there were any
 
@@ -1401,15 +1404,6 @@ app.post('/jsonRemoveFileFromOrderedVideosFilesList', function (req, res) {
 
               console.log("req.body=", req.body)
               console.log("req.body.inputVideoFile = ", req.body.inputVideoFile)
-              console.log("req.body.inputVideoFilePath = ", req.body.inputVideoFilePath)
-
-              let newObj = {inputVideoFile: req.body.inputVideoFile,
-                          inputVideoFilePath: req.body.inputVideoFilePath};
-
-              res.json({ msg:
-                        `Input video file is ${req.body.inputVideoFile},
-                         Path video file is ${req.body.inputVideoFilePath}`});
-
 
 
               //const data = JSON.stringify(req.body);
@@ -1424,6 +1418,10 @@ app.post('/jsonRemoveFileFromOrderedVideosFilesList', function (req, res) {
               console.log(dirJsonFiles)
               let outputOrdoredFileNameJSON = dirJsonFiles + "//jsonVideoOrderedMultipleFiles.json";
 
+              let newInputVideoFilePath =  dirUploads + "\\" + req.body.inputVideoFile;
+
+              let newObj = {inputVideoFile: req.body.inputVideoFile,
+                            inputVideoFilePath: newInputVideoFilePath};
 
               let oldObj = JSON.parse(fs.readFileSync(outputOrdoredFileNameJSON));
               console.log("length = ", oldObj.length)
@@ -1433,7 +1431,10 @@ app.post('/jsonRemoveFileFromOrderedVideosFilesList', function (req, res) {
 
               for (let i=0; i< oldObj.length; i++){
                 if (oldObj[i].inputVideoFile == newObj.inputVideoFile) {
+                console.log("oldObj[i].inputVideoFile = ", oldObj[i].inputVideoFile);
+                console.log("newObj.inputVideoFile = ", newObj.inputVideoFile);
                  delete oldObj[i];
+                 console.log("After delete oldObj = ", oldObj);
                  console.log("Result");
                }
               }
@@ -1595,6 +1596,7 @@ User.findById(req.user.id, function(err, foundUser){
             let outputNameFileResizedPath = dirOutputFiles + "\\"  + outputFileName.substr(0,lengthName) + "Resized.mp4";
 
             let objAnnotation = JSON.parse(fs.readFileSync(outputFileNameJSON));
+
             let firstAnnotatedLine = objAnnotation.firstAnnotatedLine;
             console.log("firstAnnotatedLine =", firstAnnotatedLine);
             let secondAnnotatedLine = objAnnotation.secondAnnotatedLine;
