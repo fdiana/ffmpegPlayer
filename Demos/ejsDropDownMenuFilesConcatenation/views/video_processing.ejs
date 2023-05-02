@@ -1,5 +1,10 @@
   <%- include('partials/header') %>
 
+
+<!--  <meta http-equiv = 'cache control' content = 'no-cache'>
+  <meta http-equiv = 'expires' content = '0'>
+  <meta http-equiv = 'pragma' content = 'no-cache'>-->
+
 <div class="jumbotron text-center">
   <div class="container">
     <i class="fas fa-key fa-6x"></i>
@@ -373,6 +378,8 @@
           }
 
 
+
+         let objInputVideoFile = {};
          function selectVideoOrderForConcatenation(ele2, eleForConcatenation){
            //alert(ele2.length)
            // BIND DATA TO <select> ELEMENT.
@@ -382,6 +389,7 @@
                '<option value="' + ele2.options[ele2.selectedIndex].text +'">'
                  + ele2.options[ele2.selectedIndex].text + '</option>';
 
+
             //var msg2 = document.getElementById('msg2');
             //msg2.innerHTML = 'Selected Video: <b>' + ele2.options[ele2.selectedIndex].text + '</b> </br>';
 
@@ -390,6 +398,9 @@
              //let inputVideoFilePath = "uploads\\" +ele2.options[ele2.selectedIndex].text
 
              ele2.remove(ele2.selectedIndex);
+             objInputVideoFile = objInputVideoFile + {inputVideoFile: inputVideoFile};
+
+             //alert(objInputVideoFile);
 
 
              fetch("/jsonAddFileToOrderedVideosFilesList", {
@@ -409,10 +420,14 @@
                    .catch(function (error) {
                      console.log(error);
                    });
-
-           }
+            }
 
          }
+        /*
+         const blob = new Blob([JSON.stringify(obj, null, 2)], {
+           type: "application/json",
+         });
+         */
 
          function unselectVideoOrderForConcatenation(ele2, eleForConcatenation) {
 

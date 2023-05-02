@@ -9,6 +9,8 @@ const findOrCreate = require('mongoose-findorcreate');
 const session = require('express-session');
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
+const dotenv = require("dotenv");
+
 
 //const connectEnsureLogin = require('connect-ensure-login');
 //const GoogleStrategy = require('passport-google-oauth20').Strategy;
@@ -63,11 +65,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 let posts = [];
+dotenv.config();
 
 //////  Create data base
 
-const server = '127.0.0.1:27017'; // REPLACE WITH YOUR DB SERVER
+const server = process.env.DB_USERNAME + ':' +  process.env.DB_PASSWORD + '@cluster0.y2pzjbk.mongodb.net'; // REPLACE WITH YOUR DB SERVER
 const database = 'userVideoDB';      // REPLACE WITH YOUR DB NAME
+
 
 class Database {
   constructor() {
@@ -76,7 +80,8 @@ class Database {
 
 
 _connect() {
-     mongoose.connect(`mongodb://${server}/${database}`)
+     //mongoose.connect(`mongodb://${server}/${database}`)
+     mongoose.connect(`mongodb+srv://${server}/${database}`)
        .then(() => {
          console.log('Database connection successful')
        })
@@ -1332,6 +1337,8 @@ app.post('/jsonAddFileToOrderedVideosFilesList', function (req, res) {
          if(foundUser){
            console.log("req.body=", req.body)
            console.log("req.body.inputVideoFile = ", req.body.inputVideoFile)
+
+
            //console.log("req.body.inputVideoFilePath = ", req.body.inputVideoFilePath)
 
            //const data = JSON.stringify(req.body);
@@ -1346,10 +1353,10 @@ app.post('/jsonAddFileToOrderedVideosFilesList', function (req, res) {
            var dirJsonFiles = dirUser  + "\\" + 'jsonFiles';
            console.log(dirJsonFiles)
 
-           let newInputVideoFilePath =  dirUploads + "\\" + req.body.inputVideoFile;
+           let newInputVideoFilePath =  dirUploads + "\\" +  req.body.inputVideoFile;
            let outputOrdoredFileNameJSON = dirJsonFiles + "//jsonVideoOrderedMultipleFiles.json";
 
-           let newObj = {inputVideoFile: req.body.inputVideoFile,
+           let newObj = {inputVideoFile:  req.body.inputVideoFile,
                          inputVideoFilePath: newInputVideoFilePath};
 
            let oldObj = JSON.parse(fs.readFileSync(outputOrdoredFileNameJSON));
@@ -1724,6 +1731,7 @@ app.get('/user',function(req, res){
     res.send({user: req.user})
 });
 
-app.listen(3000, function() {
+
+app.listen(process.env.PORT || 3000, function() {
   console.log("Server started on port 3000");
 });
