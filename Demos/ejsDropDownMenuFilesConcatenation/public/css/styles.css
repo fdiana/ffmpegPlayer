@@ -57,6 +57,7 @@ html {
   cursor: not-allowed;
 }
 
+/*
 button {
   border: 1px solid #0066cc;
   background-color: #0099cc;
@@ -69,7 +70,7 @@ button:hover {
   background-color: #00aacc;
   color: #ffffff;
   padding: 5px 10px;
-}
+}*/
 
 button:disabled,
 button[disabled]{
@@ -78,6 +79,7 @@ button[disabled]{
   color: #666666;
 }
 
+/*
 div {
   padding: 5px 10px;
 }
@@ -95,7 +97,7 @@ input:hover {
   background-color: #00aacc;
   color: #ffffff;
   padding: 5px 10px;
-}
+}*/
 
 input:disabled,
 input[disabled]{
