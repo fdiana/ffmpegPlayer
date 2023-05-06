@@ -934,7 +934,7 @@ app.get("/showVideoFileTimeCuttingParameters", function (req, res) {
 
                 //if(lengthJSONFileNameTimeCuttedParameters == 3) {
 
-                    outputFileNameTimeCuttingParameters = dirOutputFilesWorkingParameters + "\\" + outputFileName.substr(0,lengthName) + "ResizedTimeCutted.mp4";
+                    outputFileNameTimeCuttingParameters = dirOutputFilesWorkingParameters + "\\" + outputFileName.substr(0,lengthName) + "TimeCutted.mp4";
                     //console.log("outputFileNameTimeCuttingParameters = ", outputFileNameTimeCuttingParameters)
                     if (!fs.existsSync(outputFileNameTimeCuttingParameters)) {
                        console.log("No time cutted video file exists!")
@@ -1026,7 +1026,7 @@ console.log("app.post(/jsondataTimeCuttingParameters=================");
                  //
                  /////////////////////////
 
-                 let frameWidthResizedValue = 352;
+                 /*let frameWidthResizedValue = 352;
                  let frameHeightResizedValue = 640;
 
 
@@ -1038,7 +1038,7 @@ console.log("app.post(/jsondataTimeCuttingParameters=================");
                      childProcess.execSync(exeCommandResizeFile, function(err, data) {
                              console.log(err)
                              console.log(data.toString());
-                 });
+                 });*/
 
 
                  /////////////////////
@@ -1048,14 +1048,15 @@ console.log("app.post(/jsondataTimeCuttingParameters=================");
                  //
                  /////////////////////////
 
+                 let outputNameFilePath = dirUploads + "\\" + outputFileName;
                  var cuttingStartTime = req.body.cuttingStartTime;
                  console.log("req.body.cuttingStartTime =", req.body.cuttingStartTime);
                  var cuttingEndTime = req.body.cuttingEndTime;
                  console.log("req.body.cuttingEndTime =", req.body.cuttingEndTime);
 
-                 let outputNameFileTimeCutted = dirOutputFilesWorkingParameters + "\\"  + outputFileName.substr(0,lengthName) + "ResizedTimeCutted.mp4";
+                 let outputNameFileTimeCutted = dirOutputFilesWorkingParameters + "\\"  + outputFileName.substr(0,lengthName) + "TimeCutted.mp4";
                    //console.log(outputNameFileTimeCutted);
-                   let exeCommandTimeCuttedFile = ffmpegExePath + " -y -i " + outputNameFileResizedPath + " -ss " + cuttingStartTime + " -to "  + cuttingEndTime + " "  + outputNameFileTimeCutted;
+                   let exeCommandTimeCuttedFile = ffmpegExePath + " -y -i " + outputNameFilePath + " -ss " + cuttingStartTime + " -to "  + cuttingEndTime + " "  + outputNameFileTimeCutted;
                    console.log(exeCommandTimeCuttedFile);
                    childProcess.execSync(exeCommandTimeCuttedFile, function(err, data) {
                            console.log(err)
@@ -1162,6 +1163,7 @@ User.findById(req.user.id, function(err, foundUser){
                          console.log(data.toString());
              });
 
+
              //////////////////////////////////
              //
              //   Annotate the video
@@ -1169,13 +1171,25 @@ User.findById(req.user.id, function(err, foundUser){
              /////////////////////////////////
 
 
+              var actual_startTimeAnnotation = startTimeAnnotation.split(':');
+              console.log("The start time=", startTimeAnnotation);
+              console.log("type of actual_startTimeAnnotation=", typeof(actual_startTimeAnnotation))
+              var totalStartTimeInSeconds = parseInt(actual_startTimeAnnotation[0]) * 60 + parseInt(actual_startTimeAnnotation[1]);
+              console.log("Total Seconds=", totalStartTimeInSeconds);
+
+
+              var actual_endTimeAnnotation = endTimeAnnotation.split(':');
+              console.log("The end time=", endTimeAnnotation);
+              var totalEndTimeInSeconds = parseInt(actual_endTimeAnnotation[0]) * 60 + parseInt(actual_endTimeAnnotation[1]);
+              console.log("type of actual_endTimeAnnotation=", typeof(actual_endTimeAnnotation))
+              console.log("Total Seconds =", totalEndTimeInSeconds);
 
              let outputNameFileResizedAnnotated = dirOutputFilesWorkingParameters + "\\"  + outputFileName.substr(0,lengthName) + "ResizedAnnotated.mp4";
-             let drawTextFirstLine = "drawtext=text='" + firstAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=540:enable='between(t,"+ startTimeAnnotation + "," + endTimeAnnotation + ")',"
+             let drawTextFirstLine = "drawtext=text='" + firstAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=540:enable='between(t,"+ totalStartTimeInSeconds + "," + totalEndTimeInSeconds + ")',"
              //console.log("drawTextFirstLine = ", drawTextFirstLine)
-             let drawTextSecondLine ="drawtext=text='" + secondAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=570:enable='between(t,"+ startTimeAnnotation + "," + endTimeAnnotation + ")',"
+             let drawTextSecondLine ="drawtext=text='" + secondAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=570:enable='between(t,"+ totalStartTimeInSeconds + "," + totalEndTimeInSeconds + ")',"
              //console.log("drawTextSecondLine = ", drawTextSecondLine)
-             let drawTextThirdLine = "drawtext=text='" + thirdAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=600:enable='between(t,"+ startTimeAnnotation + "," + endTimeAnnotation + ")'"
+             let drawTextThirdLine = "drawtext=text='" + thirdAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=600:enable='between(t,"+ totalStartTimeInSeconds + "," + totalEndTimeInSeconds + ")'"
              //console.log("drawTextThirdLine = ", drawTextThirdLine)
              //console.log(outputNameFileResizedAnnotated);
              //let exeCommandResizeAnnotatedFile = ffmpegExePath + " -y -i " + ".\\" + req.files[i].path + " -c:a copy -s 352x640 " + outputNameFileResized;
@@ -1584,47 +1598,57 @@ User.findById(req.user.id, function(err, foundUser){
           }
 
 
+           //////////////////////////////////
+           //
+           //   Annotate the video
+           //
+           /////////////////////////////////
 
-          //////////////////////////////////
-          //
-          //   Annotate the video
-          //
-          /////////////////////////////////
+           let outputFileName = oldObj[i].inputVideoFile;
+           let outputFileLength = outputFileName.length;
+           console.log("outputFileLength = ", outputFileLength)
+           let lengthName = outputFileLength - 4;
+           let outputFileNameJSON = dirJsonFiles + "\\" + outputFileName.substr(0,lengthName) + "AnnotationParameters.json";
+           console.log("outputFileNameJSON = ", outputFileNameJSON)
 
-        for (i=0; i<lengthJsonOrderedFiles; i++ ){
+           let outputNameFileResizedPath = dirOutputFiles + "\\"  + outputFileName.substr(0,lengthName) + "Resized.mp4";
 
-            let outputFileName = oldObj[i].inputVideoFile;
-            let outputFileLength = outputFileName.length;
-            console.log("outputFileLength = ", outputFileLength)
-            let lengthName = outputFileLength - 4;
-            let outputFileNameJSON = dirJsonFiles + "\\" + outputFileName.substr(0,lengthName) + "AnnotationParameters.json";
-            console.log("outputFileNameJSON = ", outputFileNameJSON)
-
-            let outputNameFileResizedPath = dirOutputFiles + "\\"  + outputFileName.substr(0,lengthName) + "Resized.mp4";
-
-            let objAnnotation = JSON.parse(fs.readFileSync(outputFileNameJSON));
-
-            let firstAnnotatedLine = objAnnotation.firstAnnotatedLine;
-            console.log("firstAnnotatedLine =", firstAnnotatedLine);
-            let secondAnnotatedLine = objAnnotation.secondAnnotatedLine;
-            console.log("secondAnnotatedLine =",secondAnnotatedLine);
-            let thirdAnnotatedLine = objAnnotation.thirdAnnotatedLine;
-            console.log("thirdAnnotatedLine =", thirdAnnotatedLine);
+           let objAnnotation = JSON.parse(fs.readFileSync(outputFileNameJSON));
 
 
-            let outputNameFileResizedAnnotated = dirOutputFiles + "\\"  + outputFileName.substr(0,lengthName) + "ResizedAnnotated.mp4";
-            let drawTextFirstLine = "drawtext=text='" + firstAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=540:enable='gte(t,17)',"
-            let drawTextSecondLine ="drawtext=text='" + secondAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=570:enable='gte(t,17)',"
-            let drawTextThirdLine = "drawtext=text='" + thirdAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=600:enable='gte(t,17)'"
-            console.log(outputNameFileResizedAnnotated);
-            //let exeCommandResizeAnnotatedFile = ffmpegExePath + " -y -i " + ".\\" + req.files[i].path + " -c:a copy -s 352x640 " + outputNameFileResized;
-            let exeCommandResizeAnnotatedFile = ffmpegExePath + " -y -i " + outputNameFileResizedPath + " -vf " +' "'+ drawTextFirstLine + drawTextSecondLine +
-                                                drawTextThirdLine + '" ' + outputNameFileResizedAnnotated;
-            console.log(exeCommandResizeAnnotatedFile);
-            childProcess.execSync(exeCommandResizeAnnotatedFile, function(err, data) {
-                    console.log(err)
-                    console.log(data.toString());
-           });
+            var actual_startTimeAnnotation = startTimeAnnotation.split(':');
+            console.log("The start time=", startTimeAnnotation);
+            console.log("type of actual_startTimeAnnotation=", typeof(actual_startTimeAnnotation))
+            var totalStartTimeInSeconds = parseInt(actual_startTimeAnnotation[0]) * 60 + parseInt(actual_startTimeAnnotation[1]);
+            console.log("Total Seconds=", totalStartTimeInSeconds);
+
+
+            var actual_endTimeAnnotation = endTimeAnnotation.split(':');
+            console.log("The end time=", endTimeAnnotation);
+            var totalEndTimeInSeconds = parseInt(actual_endTimeAnnotation[0]) * 60 + parseInt(actual_endTimeAnnotation[1]);
+            console.log("type of actual_endTimeAnnotation=", typeof(actual_endTimeAnnotation))
+            console.log("Total Seconds =", totalEndTimeInSeconds);
+
+           let outputNameFileResizedAnnotated = dirOutputFilesWorkingParameters + "\\"  + outputFileName.substr(0,lengthName) + "ResizedAnnotated.mp4";
+           let drawTextFirstLine = "drawtext=text='" + firstAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=540:enable='between(t,"+ totalStartTimeInSeconds + "," + totalEndTimeInSeconds + ")',"
+           //console.log("drawTextFirstLine = ", drawTextFirstLine)
+           let drawTextSecondLine ="drawtext=text='" + secondAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=570:enable='between(t,"+ totalStartTimeInSeconds + "," + totalEndTimeInSeconds + ")',"
+           //console.log("drawTextSecondLine = ", drawTextSecondLine)
+           let drawTextThirdLine = "drawtext=text='" + thirdAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=600:enable='between(t,"+ totalStartTimeInSeconds + "," + totalEndTimeInSeconds + ")'"
+           //console.log("drawTextThirdLine = ", drawTextThirdLine)
+           //console.log(outputNameFileResizedAnnotated);
+           //let exeCommandResizeAnnotatedFile = ffmpegExePath + " -y -i " + ".\\" + req.files[i].path + " -c:a copy -s 352x640 " + outputNameFileResized;
+           let exeCommandResizeAnnotatedFile = ffmpegExePath + " -y -i " + outputNameFileResizedPath + " -vf " +' "'+ drawTextFirstLine + drawTextSecondLine +
+                                               drawTextThirdLine + '" ' + outputNameFileResizedAnnotated;
+           console.log(exeCommandResizeAnnotatedFile);
+           childProcess.execSync(exeCommandResizeAnnotatedFile, function(err, data) {
+                   console.log(err)
+                   console.log(data.toString());
+          });
+
+
+
+
          }
 
          ////////////////////////
