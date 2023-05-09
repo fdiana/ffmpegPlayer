@@ -496,8 +496,15 @@ app.post('/profile-upload-multiple', upload.array('profile-files', 30), function
 
            let startTime = [];
            let duration = [];
+           let actual_startTime = [];
+           let startTimeMinutesAndSeconds = [];
+           let actual_duration = [];
+           let durationTimeMinutesAndSeconds = [];
+
+
            var dataParametersCuttingParams = [];
            var dataParametersAnnotationParams = [];
+
 
            function durationToMinsAndSecs(duration) {
                     var min = parseInt(duration / 60, 10);
@@ -532,8 +539,8 @@ app.post('/profile-upload-multiple', upload.array('profile-files', 30), function
               //exeCommandStartingTime[i] = ffProbeExePath + " -i " + req.files[i].path + " -v quiet -v error -sexagesimal -show_entries format=start_time -of default=noprint_wrappers=1:nokey=1"
               //exeCommandDuration[i] = ffProbeExePath + " -i " + req.files[i].path + " -v quiet -v error -sexagesimal -show_entries format=duration -of default=noprint_wrappers=1:nokey=1"
 
-              exeCommandStartingTime[i] = ffProbeExePath + " -i " + req.files[i].path + " -v quiet -v error -show_entries format=start_time -hide_banner -of default=noprint_wrappers=1:nokey=1"
-              exeCommandDuration[i] = ffProbeExePath + " -i " + req.files[i].path + " -v quiet -v error -show_entries format=duration -hide_banner -of default=noprint_wrappers=1:nokey=1"
+              exeCommandStartingTime[i] = ffProbeExePath + " -i " + req.files[i].path + " -v quiet -v error -sexagesimal -show_entries format=start_time -hide_banner -of default=noprint_wrappers=1:nokey=1"
+              exeCommandDuration[i] = ffProbeExePath + " -i " + req.files[i].path + " -v quiet -v error -sexagesimal -show_entries format=duration -hide_banner -of default=noprint_wrappers=1:nokey=1"
 
               //console.log(exeCommandDuration[i]);
 
@@ -544,6 +551,20 @@ app.post('/profile-upload-multiple', upload.array('profile-files', 30), function
 
               startTime[i] = childProcess.execSync(exeCommandStartingTime[i]).toString().replace(/(\r\n|\n|\r|\\n)/gm, '');
               duration[i] = childProcess.execSync(exeCommandDuration[i]).toString().replace(/(\r\n|\n|\r|\\n)/gm, '');
+
+              actual_startTime[i] = startTime[i].split(':');
+              console.log("The start time=", startTime[i]);
+              console.log("type of actual_startTimeAnnotation=", typeof(actual_startTime[i]))
+              //startTimeMinutesAndSeconds[i] = parseInt(actual_startTime[i][1]) + ":"  + parseInt(actual_startTime[i][2]);
+              startTimeMinutesAndSeconds[i] = actual_startTime[i][1] + ":"  + parseInt(actual_startTime[i][2]);
+              console.log("startTimeMinutesAndSeconds=", startTimeMinutesAndSeconds[i]);
+
+              actual_duration[i] = duration[i].split(':');
+              console.log("Time duration=", duration[i]);
+              //durationTimeMinutesAndSeconds[i] = parseInt(actual_duration[i][1]) + ":"  + parseInt(actual_duration[i][2]);
+              durationTimeMinutesAndSeconds[i] = actual_duration[i][1] + ":"  + parseInt(actual_duration[i][2]);
+              console.log("type of durationTimeMinutesAndSeconds=", typeof(durationTimeMinutesAndSeconds[i]))
+              console.log("durationTimeMinutesAndSeconds[i]  =", durationTimeMinutesAndSeconds[i]);
 
 
               /*duration[i] = data.toString();
@@ -556,12 +577,12 @@ app.post('/profile-upload-multiple', upload.array('profile-files', 30), function
 
 
               dataParametersCuttingParams[i] = JSON.stringify({inputVideoFile: req.files[i].originalname,
-                                              cuttingStartTime: startTime[i],
-                                              cuttingEndTime: duration[i]});
+                                              cuttingStartTime: startTimeMinutesAndSeconds[i],
+                                              cuttingEndTime: durationTimeMinutesAndSeconds[i]});
 
               dataParametersAnnotationParams[i] = JSON.stringify({inputVideoFile: req.files[i].originalname,
-                                              startTimeAnnotation: startTime[i],
-                                              endTimeAnnotation: duration[i],
+                                              startTimeAnnotation: startTimeMinutesAndSeconds[i],
+                                              endTimeAnnotation: durationTimeMinutesAndSeconds[i],
                                               firstAnnotatedLine: ' ',
                                               secondAnnotatedLine: ' ',
                                               thirdAnnotatedLine: ' '});
@@ -1174,6 +1195,7 @@ User.findById(req.user.id, function(err, foundUser){
               var actual_startTimeAnnotation = startTimeAnnotation.split(':');
               console.log("The start time=", startTimeAnnotation);
               console.log("type of actual_startTimeAnnotation=", typeof(actual_startTimeAnnotation))
+              //var totalStartTimeInSeconds = actual_startTimeAnnotation[0] * 60 + actual_startTimeAnnotation[1];
               var totalStartTimeInSeconds = parseInt(actual_startTimeAnnotation[0]) * 60 + parseInt(actual_startTimeAnnotation[1]);
               console.log("Total Seconds=", totalStartTimeInSeconds);
 
@@ -1181,6 +1203,7 @@ User.findById(req.user.id, function(err, foundUser){
               var actual_endTimeAnnotation = endTimeAnnotation.split(':');
               console.log("The end time=", endTimeAnnotation);
               var totalEndTimeInSeconds = parseInt(actual_endTimeAnnotation[0]) * 60 + parseInt(actual_endTimeAnnotation[1]);
+              //var totalEndTimeInSeconds = actual_endTimeAnnotation[0] * 60 + actual_endTimeAnnotation[1];
               console.log("type of actual_endTimeAnnotation=", typeof(actual_endTimeAnnotation))
               console.log("Total Seconds =", totalEndTimeInSeconds);
 
@@ -1350,7 +1373,6 @@ app.post('/jsonAddFileToOrderedVideosFilesList', function (req, res) {
       } else {
          if(foundUser){
            console.log("req.body=", req.body)
-           console.log("req.body.inputVideoFile = ", req.body.inputVideoFile)
 
 
            //console.log("req.body.inputVideoFilePath = ", req.body.inputVideoFilePath)
@@ -1367,21 +1389,21 @@ app.post('/jsonAddFileToOrderedVideosFilesList', function (req, res) {
            var dirJsonFiles = dirUser  + "\\" + 'jsonFiles';
            console.log(dirJsonFiles)
 
-           let newInputVideoFilePath =  dirUploads + "\\" +  req.body.inputVideoFile;
+           //let newInputVideoFilePath =  dirUploads + "\\" +  req.body.inputVideoFile;
            let outputOrdoredFileNameJSON = dirJsonFiles + "//jsonVideoOrderedMultipleFiles.json";
 
-           let newObj = {inputVideoFile:  req.body.inputVideoFile,
-                         inputVideoFilePath: newInputVideoFilePath};
+           //let newObj = {inputVideoFile:  req.body.inputVideoFile,
+          //               inputVideoFilePath: newInputVideoFilePath};
 
-           let oldObj = JSON.parse(fs.readFileSync(outputOrdoredFileNameJSON));
+           //let oldObj = JSON.parse(fs.readFileSync(outputOrdoredFileNameJSON));
 
-           console.log("newObj=", newObj)
-           console.log("oldObj=", oldObj)
+           //console.log("newObj=", newObj)
+           //console.log("oldObj=", oldObj)
 
-           oldObj.push(newObj);
-           console.log("updatedObj=", oldObj)
+           //oldObj.push(newObj);
+           console.log("updatedObj=",  req.body)
 
-           let updatedObj = JSON.stringify(oldObj);
+           let updatedObj = JSON.stringify(req.body);
 
 
            fs.writeFileSync(outputOrdoredFileNameJSON, updatedObj, (err) =>{
@@ -1550,7 +1572,7 @@ User.findById(req.user.id, function(err, foundUser){
 
      if(foundUser){
 
-
+          console.log("objInputVideoFile = ", req.body)
           var dirUser = __dirname + '\\UsersCollections\\' + req.user.username;
           console.log(dirUser)
           var dirUploads =   dirUser  + "\\" + 'uploads';
@@ -1561,9 +1583,10 @@ User.findById(req.user.id, function(err, foundUser){
           console.log(dirJsonFiles)
 
 
-          let outputOrdoredFileNameJSON = dirJsonFiles + "\\jsonVideoOrderedMultipleFiles.json";
-          let oldObj = JSON.parse(fs.readFileSync(outputOrdoredFileNameJSON));
-
+          //let outputOrdoredFileNameJSON = dirJsonFiles + "\\jsonVideoOrderedMultipleFiles.json";
+          //let oldObj = JSON.parse(fs.readFileSync(outputOrdoredFileNameJSON));
+          let oldObj = req.body;
+          console.log("oldObj = ", oldObj)
           lengthJsonOrderedFiles = oldObj.length;
           console.log(lengthJsonOrderedFiles)
 
@@ -1604,50 +1627,60 @@ User.findById(req.user.id, function(err, foundUser){
            //
            /////////////////////////////////
 
-           let outputFileName = oldObj[i].inputVideoFile;
-           let outputFileLength = outputFileName.length;
-           console.log("outputFileLength = ", outputFileLength)
-           let lengthName = outputFileLength - 4;
-           let outputFileNameJSON = dirJsonFiles + "\\" + outputFileName.substr(0,lengthName) + "AnnotationParameters.json";
-           console.log("outputFileNameJSON = ", outputFileNameJSON)
+          for (i=0; i<lengthJsonOrderedFiles; i++ ){
 
-           let outputNameFileResizedPath = dirOutputFiles + "\\"  + outputFileName.substr(0,lengthName) + "Resized.mp4";
+             let outputFileName = oldObj[i].inputVideoFile;
+             let outputFileLength = outputFileName.length;
+             console.log("outputFileLength = ", outputFileLength)
+             let lengthName = outputFileLength - 4;
+             let outputFileNameJSON = dirJsonFiles + "\\" + outputFileName.substr(0,lengthName) + "AnnotationParameters.json";
+             console.log("outputFileNameJSON = ", outputFileNameJSON)
 
-           let objAnnotation = JSON.parse(fs.readFileSync(outputFileNameJSON));
+             let outputNameFileResizedPath = dirOutputFiles + "\\"  + outputFileName.substr(0,lengthName) + "Resized.mp4";
 
+             let objAnnotation = JSON.parse(fs.readFileSync(outputFileNameJSON));
 
-            var actual_startTimeAnnotation = startTimeAnnotation.split(':');
-            console.log("The start time=", startTimeAnnotation);
-            console.log("type of actual_startTimeAnnotation=", typeof(actual_startTimeAnnotation))
-            var totalStartTimeInSeconds = parseInt(actual_startTimeAnnotation[0]) * 60 + parseInt(actual_startTimeAnnotation[1]);
-            console.log("Total Seconds=", totalStartTimeInSeconds);
-
-
-            var actual_endTimeAnnotation = endTimeAnnotation.split(':');
-            console.log("The end time=", endTimeAnnotation);
-            var totalEndTimeInSeconds = parseInt(actual_endTimeAnnotation[0]) * 60 + parseInt(actual_endTimeAnnotation[1]);
-            console.log("type of actual_endTimeAnnotation=", typeof(actual_endTimeAnnotation))
-            console.log("Total Seconds =", totalEndTimeInSeconds);
-
-           let outputNameFileResizedAnnotated = dirOutputFilesWorkingParameters + "\\"  + outputFileName.substr(0,lengthName) + "ResizedAnnotated.mp4";
-           let drawTextFirstLine = "drawtext=text='" + firstAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=540:enable='between(t,"+ totalStartTimeInSeconds + "," + totalEndTimeInSeconds + ")',"
-           //console.log("drawTextFirstLine = ", drawTextFirstLine)
-           let drawTextSecondLine ="drawtext=text='" + secondAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=570:enable='between(t,"+ totalStartTimeInSeconds + "," + totalEndTimeInSeconds + ")',"
-           //console.log("drawTextSecondLine = ", drawTextSecondLine)
-           let drawTextThirdLine = "drawtext=text='" + thirdAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=600:enable='between(t,"+ totalStartTimeInSeconds + "," + totalEndTimeInSeconds + ")'"
-           //console.log("drawTextThirdLine = ", drawTextThirdLine)
-           //console.log(outputNameFileResizedAnnotated);
-           //let exeCommandResizeAnnotatedFile = ffmpegExePath + " -y -i " + ".\\" + req.files[i].path + " -c:a copy -s 352x640 " + outputNameFileResized;
-           let exeCommandResizeAnnotatedFile = ffmpegExePath + " -y -i " + outputNameFileResizedPath + " -vf " +' "'+ drawTextFirstLine + drawTextSecondLine +
-                                               drawTextThirdLine + '" ' + outputNameFileResizedAnnotated;
-           console.log(exeCommandResizeAnnotatedFile);
-           childProcess.execSync(exeCommandResizeAnnotatedFile, function(err, data) {
-                   console.log(err)
-                   console.log(data.toString());
-          });
+             let startTimeAnnotation = objAnnotation.startTimeAnnotation;
+             console.log("req.body.startTimeAnnotation =", objAnnotation.startTimeAnnotation);
+             let endTimeAnnotation = objAnnotation.endTimeAnnotation;
+             console.log("req.body.endTimeAnnotation =", objAnnotation.endTimeAnnotation);
+             let firstAnnotatedLine = objAnnotation.firstAnnotatedLine;
+             console.log("req.body.firstAnnotatedLine =", objAnnotation.firstAnnotatedLine);
+             let secondAnnotatedLine = objAnnotation.secondAnnotatedLine;
+             console.log("req.body.secondAnnotatedLine =", objAnnotation.secondAnnotatedLine);
+             let thirdAnnotatedLine = objAnnotation.thirdAnnotatedLine;
+             console.log("req.body.thirdAnnotatedLine =", objAnnotation.thirdAnnotatedLine);
 
 
+              var actual_startTimeAnnotation = startTimeAnnotation.split(':');
+              console.log("The start time=", startTimeAnnotation);
+              console.log("type of actual_startTimeAnnotation=", typeof(actual_startTimeAnnotation))
+              var totalStartTimeInSeconds = parseInt(actual_startTimeAnnotation[0]) * 60 + parseInt(actual_startTimeAnnotation[1]);
+              console.log("Total Seconds=", totalStartTimeInSeconds);
 
+
+              var actual_endTimeAnnotation = endTimeAnnotation.split(':');
+              console.log("The end time=", endTimeAnnotation);
+              var totalEndTimeInSeconds = parseInt(actual_endTimeAnnotation[0]) * 60 + parseInt(actual_endTimeAnnotation[1]);
+              console.log("type of actual_endTimeAnnotation=", typeof(actual_endTimeAnnotation))
+              console.log("Total Seconds =", totalEndTimeInSeconds);
+
+             let outputNameFileResizedAnnotated = dirOutputFiles + "\\"  + outputFileName.substr(0,lengthName) + "ResizedAnnotated.mp4";
+             let drawTextFirstLine = "drawtext=text='" + firstAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=540:enable='between(t,"+ totalStartTimeInSeconds + "," + totalEndTimeInSeconds + ")',"
+             //console.log("drawTextFirstLine = ", drawTextFirstLine)
+             let drawTextSecondLine ="drawtext=text='" + secondAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=570:enable='between(t,"+ totalStartTimeInSeconds + "," + totalEndTimeInSeconds + ")',"
+             //console.log("drawTextSecondLine = ", drawTextSecondLine)
+             let drawTextThirdLine = "drawtext=text='" + thirdAnnotatedLine + " ':fontcolor=white:fontsize=20:x=(w-text_w)/2:y=600:enable='between(t,"+ totalStartTimeInSeconds + "," + totalEndTimeInSeconds + ")'"
+             //console.log("drawTextThirdLine = ", drawTextThirdLine)
+             //console.log(outputNameFileResizedAnnotated);
+             //let exeCommandResizeAnnotatedFile = ffmpegExePath + " -y -i " + ".\\" + req.files[i].path + " -c:a copy -s 352x640 " + outputNameFileResized;
+             let exeCommandResizeAnnotatedFile = ffmpegExePath + " -y -i " + outputNameFileResizedPath + " -vf " +' "'+ drawTextFirstLine + drawTextSecondLine +
+                                                 drawTextThirdLine + '" ' + outputNameFileResizedAnnotated;
+             console.log(exeCommandResizeAnnotatedFile);
+             childProcess.execSync(exeCommandResizeAnnotatedFile, function(err, data) {
+                     console.log(err)
+                     console.log(data.toString());
+            });
 
          }
 
@@ -1673,7 +1706,7 @@ User.findById(req.user.id, function(err, foundUser){
              childProcess.execSync(exeCommandCreateTSFile, function(err, data) {
                      console.log(err)
                      console.log(data.toString());
-         });
+                   });
          }
 
 

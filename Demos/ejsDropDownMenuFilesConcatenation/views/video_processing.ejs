@@ -379,7 +379,7 @@
 
 
 
-         let objInputVideoFile = {};
+         let objInputVideoFile = [];
          function selectVideoOrderForConcatenation(ele2, eleForConcatenation){
            //alert(ele2.length)
            // BIND DATA TO <select> ELEMENT.
@@ -394,16 +394,36 @@
             //msg2.innerHTML = 'Selected Video: <b>' + ele2.options[ele2.selectedIndex].text + '</b> </br>';
 
 
-             let inputVideoFile = ele2.options[ele2.selectedIndex].text
+             let inputVideoFile = ele2.options[ele2.selectedIndex].text;
+
+            // alert(objInputVideoFile)
+             objInputVideoFile.push({inputVideoFile: inputVideoFile});
+            // alert(objInputVideoFile)
              //let inputVideoFilePath = "uploads\\" +ele2.options[ele2.selectedIndex].text
 
              ele2.remove(ele2.selectedIndex);
-             objInputVideoFile = objInputVideoFile + {inputVideoFile: inputVideoFile};
-
-             //alert(objInputVideoFile);
 
 
-             fetch("/jsonAddFileToOrderedVideosFilesList", {
+            // alert(objInputVideoFile)
+
+            /*fetch("/jsonAddFileToOrderedVideosFilesList", {
+                   method: "POST",
+                   headers: {
+                     "Content-Type": "application/json",
+                   },
+                   body: JSON.stringify(objInputVideoFile),
+                   })
+                   .then(function (response) {
+                     return response.json();
+                   })
+                   .then(function (data) {
+                     result.innerHTML = data.msg2;
+                   })
+                   .catch(function (error) {
+                     console.log(error);
+                   });*/
+
+             /*fetch("/jsonAddFileToOrderedVideosFilesList", {
                    method: "POST",
                    headers: {
                      "Content-Type": "application/json",
@@ -419,7 +439,7 @@
                    })
                    .catch(function (error) {
                      console.log(error);
-                   });
+                   });*/
             }
 
          }
@@ -491,7 +511,7 @@
           // concatenateOrderedVideos.innerText = 'Posting...'
 
            // Simple POST request with a JSON body using fetch
-           var xhr = new XMLHttpRequest();
+           /*var xhr = new XMLHttpRequest();
            //xhr.open('POST', "http://login:password@192.168.0.20:3000/selectVideoFile", true);
            xhr.open('POST', "/concatenateVideos", true);
            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -502,9 +522,29 @@
 
            };
 
-           xhr.send(eleForConcatenation.options[eleForConcatenation.selectedIndex].text);
+           xhr.send(eleForConcatenation.options[eleForConcatenation.selectedIndex].text);*/
 
-           alert('Load output video')
+           fetch("/concatenateVideos", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify(objInputVideoFile),
+                  })
+                  .then(function (response) {
+                    return response.json();
+                  })
+                  .then(function (data) {
+                    result.innerHTML = data.msg2;
+                  })
+                  .catch(function (error) {
+                    console.log(error);
+                  });
+
+
+           //alert(objInputVideoFile)
+
+           //alert('Load output video')
 
 
            document.getElementById("videoPlayerConcatenatedVideos").load();
