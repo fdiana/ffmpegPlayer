@@ -9,13 +9,43 @@ Tools: HTML, Cascading Style Sheets (CSS), JavaScript, Node.js, Express Node.js,
 
 How to Use the Project
 Steps to perform:
+
+<div>
+<p>
 1.	Upload a specific number of videos
-  ![](./pictures/uploadVideos.png)
+<img align="left" src="./pictures/uploadVideos.png" style="border: 2px solid  black;>
+</p>
+
+<p>
 2.	Select a video that you want to perform time cutting and/or annotations.
-  ![](./pictures/selectVideoTimeCuttingAnnotation.png)
+<img align="left" src="./pictures/selectVideoTimeCuttingAnnotation.png"  style="border: 2px solid  black;>
+</p>
+
+
+<p>
 3.	Select the order of concatenation for the videos
-  ![](./pictures/orderVideosForConcatenation.png)
+</p>
+
+
+<p align="left">
+<img align="left" src="./pictures/orderVideosForConcatenation.png" style="border: 2px solid  black;>
+</p>
+
+
+<p>
 4.	Unselect the order of concatenation for the videos
-  ![](./pictures/deselectVideosForConcatenation.png)
+</p>
+
+
+<p align="left">
+<img align="left" src="./pictures/deselectVideosForConcatenation.png" style="border: 2px solid  black;>
+</p>
+
+<p>
 5.	Concatenate the videos
-  ![](./pictures/concatenateVideos.png)
+</p>
+
+<p align="left">
+<img align="left" src="./pictures/concatenateVideos.png" style="border: 2px solid  black;>
+</p>
+</div>
